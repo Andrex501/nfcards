@@ -5,6 +5,7 @@ const path = require('path');
 const Card = require('./models/Card');
 
 const QRCode = require('qrcode');
+const session = require('express-session');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,6 +17,27 @@ const MONGODB_URI = 'mongodb://nithsonbarragan03_db_user:chloe12345@ac-woajqza-s
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Configuración de Sesiones
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'nfcards_secure_session_secret_2026',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 // 24 horas de sesión
+    }
+  })
+);
+
+// Middleware de autenticación para proteger el panel de administración
+function requireAuth(req, res, next) {
+  if (req.session && req.session.isAuthenticated) {
+    return next();
+  }
+  return res.redirect('/login');
+}
 
 // Configuración de motor de vistas EJS
 app.set('view engine', 'ejs');
@@ -31,10 +53,57 @@ mongoose
     console.error('❌ Error de conexión a MongoDB:', err.message);
   });
 
-// Ruta raíz: redirige al panel admin
+// Ruta raíz: redirige al panel admin (o login si no está autenticado)
 app.get('/', (req, res) => {
   res.redirect('/admin');
 });
+
+/**
+ * GET /login
+ * Formulario de autenticación administrativo
+ */
+app.get('/login', (req, res) => {
+  if (req.session && req.session.isAuthenticated) {
+    return res.redirect('/admin');
+  }
+  res.render('login', {
+    error: req.query.err || null,
+    message: req.query.msg || null
+  });
+});
+
+/**
+ * POST /login
+ * Valida la contraseña maestra configurada en ADMIN_PASSWORD
+ */
+app.post('/login', (req, res) => {
+  const { password } = req.body;
+  const adminPassword = (process.env.ADMIN_PASSWORD || 'admin12345').trim();
+
+  if (password && password.trim() === adminPassword) {
+    req.session.isAuthenticated = true;
+    return res.redirect('/admin');
+  } else {
+    return res.redirect('/login?err=' + encodeURIComponent('Contraseña administrativa incorrecta'));
+  }
+});
+
+/**
+ * ALL /logout
+ * Destruye la sesión activa y redirige al login
+ */
+app.all('/logout', (req, res) => {
+  if (req.session) {
+    req.session.destroy(() => {
+      res.redirect('/login?msg=' + encodeURIComponent('Sesión cerrada correctamente'));
+    });
+  } else {
+    res.redirect('/login');
+  }
+});
+
+// Proteger todas las rutas del panel y operaciones administrativas
+app.use('/admin', requireAuth);
 
 /**
  * GET /admin
@@ -199,12 +268,18 @@ app.post('/admin/update/:cardId', async (req, res) => {
     const { businessName, instagramUrl, whatsappNumber, googleReviewsUrl, status } = req.body;
 
     const newStatus = status || 'assigned';
+    const cleanBusinessName = businessName ? businessName.trim() : '';
+
+    // El único campo obligatorio para guardar si el estado es 'assigned' es el Nombre del Negocio
+    if (newStatus === 'assigned' && !cleanBusinessName) {
+      return res.redirect(`/admin?err=${encodeURIComponent('El nombre del negocio es obligatorio para asignar la tarjeta')}&edit=${encodeURIComponent(cardId.trim())}`);
+    }
 
     // Buscar y actualizar o crear si no existiese
     const updatedCard = await Card.findOneAndUpdate(
       { cardId: cardId.trim() },
       {
-        businessName: businessName ? businessName.trim() : '',
+        businessName: cleanBusinessName,
         instagramUrl: instagramUrl ? instagramUrl.trim() : '',
         whatsappNumber: whatsappNumber ? whatsappNumber.trim() : '',
         googleReviewsUrl: googleReviewsUrl ? googleReviewsUrl.trim() : '',
@@ -214,7 +289,7 @@ app.post('/admin/update/:cardId', async (req, res) => {
       { new: true, upsert: true, runValidators: true }
     );
 
-    res.redirect(`/admin?msg=${encodeURIComponent(`Tarjeta ${cardId} actualizada con éxito`)}&edit=${cardId}`);
+    res.redirect(`/admin?msg=${encodeURIComponent(`Tarjeta ${cardId} actualizada con éxito`)}&edit=${encodeURIComponent(cardId.trim())}`);
   } catch (error) {
     console.error('Error al actualizar tarjeta:', error);
     res.redirect(`/admin?err=${encodeURIComponent('Error al guardar datos: ' + error.message)}`);

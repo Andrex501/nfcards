@@ -2,9 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= card.businessName ? card.businessName : 'Tarjeta NFC' %> | Conexión Digital</title>
-  <meta name="description" content="Conecta directamente con <%= card.businessName %> a través de WhatsApp, Instagram y Reseñas de Google.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title><%= card.businessName ? card.businessName : 'Tarjeta NFC' %> | Conexión Oficial</title>
+  <meta name="description" content="Canales digitales oficiales y verificación para <%= card.businessName || 'este comercio' %>. Conéctate por WhatsApp, Instagram y Reseñas de Google.">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20%220%22%20%22100%22%20%22100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
@@ -12,14 +12,14 @@
   <div class="mobile-viewport">
     <main class="mobile-card-container">
       
-      <!-- Encabezado de la Tarjeta y Negocio -->
+      <!-- Encabezado del Perfil Oficial -->
       <header class="profile-header">
         <div class="avatar-wrapper">
-          <div class="business-avatar" aria-label="Logo del negocio">
+          <div class="business-avatar" aria-label="Monograma del negocio">
             <%= (card.businessName && card.businessName.length > 0) ? card.businessName.trim().charAt(0).toUpperCase() : 'N' %>
           </div>
-          <div class="nfc-badge" title="Lectura NFC Exitosa">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <div class="nfc-badge" title="Lectura NFC Certificada">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
               <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
             </svg>
@@ -30,84 +30,96 @@
         
         <div class="business-tagline">
           <span class="pulse-dot"></span>
-          <span>Perfil Oficial Verificado &bull; Colombia 🇨🇴</span>
+          <span>Perfil Oficial Verificado &bull; Colombia</span>
         </div>
       </header>
 
-      <!-- Botones Principales de Acción -->
-      <section class="actions-list" aria-label="Canales de contacto y opiniones">
-        
-        <!-- Botón de WhatsApp -->
-        <% if (card.whatsappNumber) { %>
-          <a href="<%= card.whatsappLink %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-whatsapp" id="btn-whatsapp">
-            <div class="btn-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-              </svg>
-            </div>
-            <div class="btn-text-group">
-              <span class="btn-title">Escríbenos a WhatsApp</span>
-              <span class="btn-subtitle">Atención inmediata por chat</span>
-            </div>
-            <div class="btn-arrow">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </div>
-          </a>
-        <% } %>
+      <% 
+        // Verificaciones estrictas de existencia de canales (no nulos ni vacíos)
+        const hasWhatsapp = Boolean(card.whatsappNumber && card.whatsappNumber.trim() !== '' && card.whatsappLink);
+        const hasInstagram = Boolean(card.instagramUrl && card.instagramUrl.trim() !== '' && card.instagramLink);
+        const hasReviews = Boolean(card.googleReviewsUrl && card.googleReviewsUrl.trim() !== '');
+        const hasAnyAction = hasWhatsapp || hasInstagram || hasReviews;
+      %>
 
-        <!-- Botón de Instagram -->
-        <% if (card.instagramUrl) { %>
-          <a href="<%= card.instagramLink %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-instagram" id="btn-instagram">
-            <div class="btn-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-              </svg>
-            </div>
-            <div class="btn-text-group">
-              <span class="btn-title">Síguenos en Instagram</span>
-              <span class="btn-subtitle">Novedades, fotos y catálogo</span>
-            </div>
-            <div class="btn-arrow">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </div>
-          </a>
-        <% } %>
+      <!-- Canales de Contacto Directo (Estrictamente Condicionales) -->
+      <% if (hasAnyAction) { %>
+        <section class="actions-list" aria-label="Canales oficiales de contacto">
+          
+          <!-- Canal WhatsApp Señorial -->
+          <% if (hasWhatsapp) { %>
+            <a href="<%= card.whatsappLink %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-whatsapp" id="btn-whatsapp">
+              <div class="btn-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                </svg>
+              </div>
+              <div class="btn-text-group">
+                <span class="btn-title">Escríbenos a WhatsApp</span>
+                <span class="btn-subtitle">Atención inmediata por chat</span>
+              </div>
+              <div class="btn-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </div>
+            </a>
+          <% } %>
 
-        <!-- Botón de Reseñas de Google Maps -->
-        <% if (card.googleReviewsUrl) { %>
-          <a href="<%= card.googleReviewsUrl %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-reviews" id="btn-google-reviews">
-            <div class="btn-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-            </div>
-            <div class="btn-text-group">
-              <span class="btn-title">Califícanos en Google</span>
-              <div class="stars-rating">★★★★★ <span style="font-size:0.75rem; color:#dbeafe;">5.0</span></div>
-            </div>
-            <div class="btn-arrow">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </div>
-          </a>
-        <% } %>
+          <!-- Canal Instagram Señorial -->
+          <% if (hasInstagram) { %>
+            <a href="<%= card.instagramLink %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-instagram" id="btn-instagram">
+              <div class="btn-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+              </div>
+              <div class="btn-text-group">
+                <span class="btn-title">Síguenos en Instagram</span>
+                <span class="btn-subtitle">Novedades, fotos y catálogo</span>
+              </div>
+              <div class="btn-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </div>
+            </a>
+          <% } %>
 
-      </section>
+          <!-- Canal Reseñas de Google Maps -->
+          <% if (hasReviews) { %>
+            <a href="<%= card.googleReviewsUrl %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-reviews" id="btn-google-reviews">
+              <div class="btn-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </div>
+              <div class="btn-text-group">
+                <span class="btn-title">Califícanos en Google</span>
+                <div class="stars-rating">
+                  ★★★★★ <span>Excelente &bull; 5.0</span>
+                </div>
+              </div>
+              <div class="btn-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </div>
+            </a>
+          <% } %>
+
+        </section>
+      <% } %>
 
       <!-- Botón de Compartir Perfil -->
       <div style="margin-bottom: 1.5rem; text-align: center;">
-        <button id="btn-share" class="btn-secondary" style="width: 100%; justify-content: center;">
+        <button id="btn-share" class="btn-secondary" style="width: 100%; justify-content: center; min-height: 46px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="18" cy="5" r="3"></circle>
             <circle cx="6" cy="12" r="3"></circle>
@@ -119,9 +131,13 @@
         </button>
       </div>
 
-      <!-- Footer de la Tarjeta Móvil -->
+      <!-- Pie de la Tarjeta Móvil -->
       <footer class="mobile-footer">
         <div class="nfc-tag-indicator">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+          </svg>
           <span>Tarjeta Inteligente NFC #<%= card.cardId %></span>
         </div>
       </footer>
@@ -130,7 +146,7 @@
   </div>
 
   <script>
-    // Función para compartir el perfil usando Web Share API o copiar URL
+    // Compartir perfil con Web Share API o copiar URL
     const shareBtn = document.getElementById('btn-share');
     const shareText = document.getElementById('share-text');
 
@@ -147,7 +163,6 @@
             // Cancelado por el usuario
           }
         } else {
-          // Fallback a copiar al portapapeles
           navigator.clipboard.writeText(window.location.href).then(() => {
             shareText.textContent = '¡Enlace copiado!';
             setTimeout(() => {

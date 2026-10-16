@@ -21,17 +21,20 @@ const cardSchema = new mongoose.Schema({
   instagramUrl: {
     type: String,
     trim: true,
-    default: ''
+    default: '',
+    required: false
   },
   whatsappNumber: {
     type: String,
     trim: true,
-    default: ''
+    default: '',
+    required: false
   },
   googleReviewsUrl: {
     type: String,
     trim: true,
-    default: ''
+    default: '',
+    required: false
   },
   updatedAt: {
     type: Date,
@@ -47,7 +50,7 @@ cardSchema.pre('save', function (next) {
 
 // Helper virtual para generar el link directo a WhatsApp
 cardSchema.virtual('whatsappLink').get(function () {
-  if (!this.whatsappNumber) return '';
+  if (!this.whatsappNumber || !this.whatsappNumber.trim()) return '';
   const cleaned = this.whatsappNumber.replace(/\D/g, '');
   if (!cleaned) return '';
   // Si no tiene código de país y tiene 10 dígitos (Colombia celular ej: 300xxxxxxx), anteponer 57
@@ -59,7 +62,7 @@ cardSchema.virtual('whatsappLink').get(function () {
 
 // Helper virtual para formatear link de Instagram
 cardSchema.virtual('instagramLink').get(function () {
-  if (!this.instagramUrl) return '';
+  if (!this.instagramUrl || !this.instagramUrl.trim()) return '';
   let url = this.instagramUrl.trim();
   if (url.startsWith('@')) {
     return `https://instagram.com/${url.substring(1)}`;
