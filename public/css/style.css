@@ -1,0 +1,763 @@
+/* ===================================================
+   SISTEMA DE ESTILOS - TARJETAS INTELIGENTES NFC & QR
+   =================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
+
+:root {
+  --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-title: 'Outfit', system-ui, -apple-system, sans-serif;
+
+  /* Paleta base moderna */
+  --bg-dark: #0b0f19;
+  --bg-card: rgba(18, 24, 38, 0.85);
+  --bg-card-hover: rgba(26, 35, 54, 0.95);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(99, 102, 241, 0.5);
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  /* Colores de marca y acentos */
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-light: rgba(99, 102, 241, 0.15);
+
+  --whatsapp: #25d366;
+  --whatsapp-hover: #20bd5a;
+  --whatsapp-glow: rgba(37, 211, 102, 0.25);
+
+  --google: #4285f4;
+  --google-hover: #3367d6;
+  --google-glow: rgba(66, 133, 244, 0.25);
+
+  --status-available: #10b981;
+  --status-available-bg: rgba(16, 185, 129, 0.12);
+  --status-assigned: #3b82f6;
+  --status-assigned-bg: rgba(59, 130, 246, 0.12);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.5;
+  background-image: 
+    radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 60%);
+  background-attachment: fixed;
+  background-size: cover;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===================================================
+   ESTILOS LANDING MÓVIL (VISTA PÚBLICA /p/:cardId)
+   =================================================== */
+
+.mobile-viewport {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem 1rem;
+}
+
+.mobile-card-container {
+  width: 100%;
+  max-width: 440px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 28px;
+  padding: 2.5rem 1.75rem 2rem;
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-card-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #6366f1, #ec4899, #f59e0b, #10b981);
+}
+
+/* Encabezado del Perfil de Negocio */
+.profile-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.avatar-wrapper {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 1.25rem;
+}
+
+.business-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-title);
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.nfc-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #10b981;
+  color: #042f2e;
+  border-radius: var(--radius-full);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);
+  border: 2px solid var(--bg-dark);
+}
+
+.business-title {
+  font-family: var(--font-title);
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+  margin-bottom: 0.4rem;
+}
+
+.business-tagline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-glass);
+}
+
+/* Lista de Botones de Acción Móvil */
+.actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  padding: 1.15rem 1.25rem;
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+
+.action-btn:active {
+  transform: scale(0.98);
+}
+
+.action-btn .btn-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.action-btn .btn-text-group {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.action-btn .btn-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.action-btn .btn-subtitle {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.action-btn .btn-arrow {
+  margin-left: auto;
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+}
+
+.action-btn:hover .btn-arrow {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+/* Estilos de botones individuales */
+.btn-whatsapp {
+  background: linear-gradient(135deg, #128c7e 0%, #25d366 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 24px var(--whatsapp-glow);
+}
+
+.btn-whatsapp:hover {
+  background: linear-gradient(135deg, #159b8c 0%, #29e370 100%);
+  box-shadow: 0 12px 28px rgba(37, 211, 102, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-whatsapp .btn-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-instagram {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(220, 39, 67, 0.3);
+}
+
+.btn-instagram:hover {
+  box-shadow: 0 12px 28px rgba(220, 39, 67, 0.45);
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.btn-instagram .btn-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-reviews {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 24px var(--google-glow);
+}
+
+.btn-reviews:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+  box-shadow: 0 12px 28px rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-reviews .btn-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.stars-rating {
+  color: #fbbf24;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+}
+
+/* Pie de la tarjeta móvil */
+.mobile-footer {
+  text-align: center;
+  border-top: 1px solid var(--border-glass);
+  padding-top: 1.5rem;
+}
+
+.nfc-tag-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+  animation: pulseGreen 2s infinite;
+}
+
+/* ===================================================
+   VISTA DE TARJETA DISPONIBLE / SIN ASIGNAR
+   =================================================== */
+.available-card {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.radar-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.1);
+  border: 2px dashed rgba(99, 102, 241, 0.4);
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #818cf8;
+  position: relative;
+  animation: rotateBorder 12s linear infinite;
+}
+
+.radar-circle svg {
+  animation: pulseScale 2s infinite ease-in-out;
+}
+
+.badge-card-id {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-glass);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+  font-size: 0.95rem;
+  color: #38bdf8;
+  margin-bottom: 1rem;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--primary);
+  color: #fff;
+  padding: 0.85rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+/* ===================================================
+   PANEL ADMINISTRATIVO (/admin)
+   =================================================== */
+
+.admin-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border-glass);
+  padding-bottom: 1.75rem;
+}
+
+.brand-title {
+  font-family: var(--font-title);
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #fff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1.2fr;
+  gap: 2rem;
+}
+
+@media (max-width: 960px) {
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-title {
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Alertas */
+.alert {
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.alert-success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+}
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+/* Tabla de tarjetas */
+.cards-table-wrapper {
+  overflow-x: auto;
+}
+
+.cards-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.cards-table th {
+  padding: 0.85rem 1rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-glass);
+  font-weight: 600;
+}
+
+.cards-table td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.9rem;
+}
+
+.cards-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Badges de estado */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.status-pill.available {
+  background: var(--status-available-bg);
+  color: var(--status-available);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-pill.assigned {
+  background: var(--status-assigned-bg);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* Formularios */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  background: rgba(11, 15, 25, 0.7);
+  border: 1px solid var(--border-glass);
+  color: var(--text-main);
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.btn-group {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  border: 1px solid var(--border-glass);
+  padding: 0.65rem 1.15rem;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.88rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.btn-sm {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+@keyframes pulseScale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes rotateBorder {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===================================================
+   COMPONENTES DE CÓDIGOS QR & MODAL DE IMPRESIÓN
+   =================================================== */
+
+.qr-thumbnail-box {
+  width: 46px;
+  height: 46px;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.qr-thumbnail-box:hover {
+  transform: scale(1.18);
+  box-shadow: 0 6px 14px rgba(99, 102, 241, 0.4);
+  border-color: var(--primary);
+}
+
+.qr-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Panel destacado de QR para tarjeta seleccionada */
+.selected-qr-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-glass);
+  padding: 1.15rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+}
+
+.selected-qr-img-wrapper {
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.selected-qr-img-wrapper:hover {
+  transform: scale(1.05);
+}
+
+.selected-qr-img-wrapper img {
+  width: 76px;
+  height: 76px;
+  display: block;
+}
+
+.selected-qr-info {
+  flex-grow: 1;
+}
+
+/* MODAL INTERACTIVO */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(4, 7, 15, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.modal-overlay.active {
+  display: flex;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.modal-card {
+  background: #111827;
+  border: 1px solid var(--border-glass);
+  width: 100%;
+  max-width: 440px;
+  border-radius: 24px;
+  padding: 2.25rem 2rem 2rem;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: transparent;
+  border: none;
+  font-size: 1.75rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: #fff;
+}
+
+.modal-qr-container {
+  background: #ffffff;
+  padding: 1.25rem;
+  border-radius: 20px;
+  display: inline-block;
+  margin: 1.25rem auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.modal-qr-container img {
+  width: 210px;
+  height: 210px;
+  display: block;
+}
+
+.modal-url-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-glass);
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+

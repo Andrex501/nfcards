@@ -1,0 +1,281 @@
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const path = require('path');
+const Card = require('./models/Card');
+
+const QRCode = require('qrcode');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+const MONGODB_URI = 'mongodb://nithsonbarragan03_db_user:chloe12345@ac-woajqza-shard-00-00.ftjxrxh.mongodb.net:27017,ac-woajqza-shard-00-01.ftjxrxh.mongodb.net:27017,ac-woajqza-shard-00-02.ftjxrxh.mongodb.net:27017/?ssl=true&replicaSet=atlas-m8wmr1-shard-0&authSource=admin';
+
+
+// Configuración de middlewares
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Configuración de motor de vistas EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Conexión a MongoDB
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    console.log('✅ Conectado exitosamente a MongoDB');
+  })
+  .catch((err) => {
+    console.error('❌ Error de conexión a MongoDB:', err.message);
+  });
+
+// Ruta raíz: redirige al panel admin
+app.get('/', (req, res) => {
+  res.redirect('/admin');
+});
+
+/**
+ * GET /admin
+ * Panel de administración: lista todas las tarjetas con su QR generado dinámicamente
+ */
+app.get('/admin', async (req, res) => {
+  try {
+    const cards = await Card.find().sort({ cardId: 1 });
+    const selectedId = req.query.edit;
+    let selectedCard = null;
+
+    // Detectar dinámicamente la URL base del servidor (ej: http://localhost:3000)
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+    // Generar códigos QR para todas las tarjetas
+    const cardsWithQr = await Promise.all(
+      cards.map(async (card) => {
+        const publicUrl = `${baseUrl}/p/${card.cardId}`;
+        const qrDataUrl = await QRCode.toDataURL(publicUrl, {
+          width: 300,
+          margin: 1,
+          color: {
+            dark: '#000000',
+            light: '#ffffff'
+          },
+          errorCorrectionLevel: 'H'
+        });
+
+        const cardObj = card.toObject({ virtuals: true });
+        cardObj.publicUrl = publicUrl;
+        cardObj.qrDataUrl = qrDataUrl;
+        return cardObj;
+      })
+    );
+
+    if (selectedId) {
+      selectedCard = cardsWithQr.find((c) => c.cardId === selectedId) || null;
+      if (!selectedCard) {
+        const dbCard = await Card.findOne({ cardId: selectedId });
+        if (dbCard) {
+          const publicUrl = `${baseUrl}/p/${dbCard.cardId}`;
+          const qrDataUrl = await QRCode.toDataURL(publicUrl, {
+            width: 300,
+            margin: 1,
+            color: { dark: '#000000', light: '#ffffff' },
+            errorCorrectionLevel: 'H'
+          });
+          selectedCard = { ...dbCard.toObject({ virtuals: true }), publicUrl, qrDataUrl };
+        }
+      }
+    }
+
+    res.render('admin', {
+      cards: cardsWithQr,
+      selectedCard,
+      baseUrl,
+      message: req.query.msg || null,
+      error: req.query.err || null
+    });
+  } catch (error) {
+    console.error('Error al cargar panel admin:', error);
+    res.status(500).send('Error interno del servidor al cargar el panel administrativo.');
+  }
+});
+
+/**
+ * GET /admin/qr/:cardId/download
+ * Descarga el código QR en PNG de alta resolución (1024x1024) para impresión física
+ */
+app.get('/admin/qr/:cardId/download', async (req, res) => {
+  try {
+    const { cardId } = req.params;
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const publicUrl = `${baseUrl}/p/${cardId.trim()}`;
+
+    // Generar buffer en alta resolución (1024px)
+    const qrBuffer = await QRCode.toBuffer(publicUrl, {
+      width: 1024,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#ffffff'
+      },
+      errorCorrectionLevel: 'H'
+    });
+
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-Disposition', `attachment; filename="QR-Tarjeta-${cardId.trim()}.png"`);
+    res.send(qrBuffer);
+  } catch (error) {
+    console.error('Error al generar descarga de QR:', error);
+    res.status(500).send('Error al generar el código QR para descarga.');
+  }
+});
+
+/**
+ * GET /admin/qr/:cardId/print
+ * Vista limpia optimizada para imprimir el código QR con su sticker/tarjeta
+ */
+app.get('/admin/qr/:cardId/print', async (req, res) => {
+  try {
+    const { cardId } = req.params;
+    const card = await Card.findOne({ cardId: cardId.trim() });
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const publicUrl = `${baseUrl}/p/${cardId.trim()}`;
+
+    const qrDataUrl = await QRCode.toDataURL(publicUrl, {
+      width: 600,
+      margin: 1,
+      color: { dark: '#000000', light: '#ffffff' },
+      errorCorrectionLevel: 'H'
+    });
+
+    res.render('print-qr', {
+      card: card || { cardId: cardId.trim(), businessName: 'Tarjeta Sin Asignar', status: 'available' },
+      publicUrl,
+      qrDataUrl
+    });
+  } catch (error) {
+    console.error('Error al generar vista de impresión de QR:', error);
+    res.status(500).send('Error al cargar la vista de impresión.');
+  }
+
+});
+
+/**
+ * POST /admin/create
+ * Crea una nueva tarjeta física en el sistema con estado 'available'
+ */
+app.post('/admin/create', async (req, res) => {
+  try {
+    const { cardId } = req.body;
+    if (!cardId || !cardId.trim()) {
+      return res.redirect('/admin?err=' + encodeURIComponent('El ID de tarjeta es requerido'));
+    }
+
+    const cleanId = cardId.trim();
+    const existing = await Card.findOne({ cardId: cleanId });
+    if (existing) {
+      return res.redirect('/admin?err=' + encodeURIComponent(`La tarjeta "${cleanId}" ya existe`));
+    }
+
+    await Card.create({
+      cardId: cleanId,
+      status: 'available'
+    });
+
+    res.redirect('/admin?msg=' + encodeURIComponent(`Tarjeta ${cleanId} registrada como disponible`));
+  } catch (error) {
+    console.error('Error al crear tarjeta:', error);
+    res.redirect('/admin?err=' + encodeURIComponent('No se pudo crear la tarjeta: ' + error.message));
+  }
+});
+
+/**
+ * POST /admin/update/:cardId
+ * Actualiza los datos del negocio y cambia el estado a 'assigned'
+ */
+app.post('/admin/update/:cardId', async (req, res) => {
+  try {
+    const { cardId } = req.params;
+    const { businessName, instagramUrl, whatsappNumber, googleReviewsUrl, status } = req.body;
+
+    const newStatus = status || 'assigned';
+
+    // Buscar y actualizar o crear si no existiese
+    const updatedCard = await Card.findOneAndUpdate(
+      { cardId: cardId.trim() },
+      {
+        businessName: businessName ? businessName.trim() : '',
+        instagramUrl: instagramUrl ? instagramUrl.trim() : '',
+        whatsappNumber: whatsappNumber ? whatsappNumber.trim() : '',
+        googleReviewsUrl: googleReviewsUrl ? googleReviewsUrl.trim() : '',
+        status: newStatus,
+        updatedAt: new Date()
+      },
+      { new: true, upsert: true, runValidators: true }
+    );
+
+    res.redirect(`/admin?msg=${encodeURIComponent(`Tarjeta ${cardId} actualizada con éxito`)}&edit=${cardId}`);
+  } catch (error) {
+    console.error('Error al actualizar tarjeta:', error);
+    res.redirect(`/admin?err=${encodeURIComponent('Error al guardar datos: ' + error.message)}`);
+  }
+});
+
+/**
+ * POST /admin/reset/:cardId
+ * Restablece una tarjeta al estado 'available'
+ */
+app.post('/admin/reset/:cardId', async (req, res) => {
+  try {
+    const { cardId } = req.params;
+    await Card.findOneAndUpdate(
+      { cardId: cardId.trim() },
+      {
+        businessName: '',
+        instagramUrl: '',
+        whatsappNumber: '',
+        googleReviewsUrl: '',
+        status: 'available',
+        updatedAt: new Date()
+      }
+    );
+    res.redirect(`/admin?msg=${encodeURIComponent(`Tarjeta ${cardId} restablecida a disponible`)}`);
+  } catch (error) {
+    console.error('Error al restablecer tarjeta:', error);
+    res.redirect(`/admin?err=${encodeURIComponent('Error al restablecer tarjeta')}`);
+  }
+});
+
+/**
+ * GET /p/:cardId
+ * Ruta pública escaneada desde el NFC / Código QR
+ */
+app.get('/p/:cardId', async (req, res) => {
+  try {
+    const { cardId } = req.params;
+    const card = await Card.findOne({ cardId: cardId.trim() });
+
+    // Si no existe la tarjeta en la BD o su estado es 'available'
+    if (!card || card.status === 'available') {
+      return res.render('available', {
+        cardId: cardId.trim(),
+        cardExists: !!card
+      });
+    }
+
+    // Si está 'assigned', renderizar la landing page móvil
+    res.render('profile', {
+      card
+    });
+  } catch (error) {
+    console.error('Error al procesar lectura de tarjeta:', error);
+    res.status(500).send('Error al procesar la tarjeta.');
+  }
+});
+
+// Inicio del servidor
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor ejecutándose en http://localhost:${PORT}`);
+  console.log(`👉 Panel Admin: http://localhost:${PORT}/admin`);
+  console.log(`👉 Ejemplo NFC: http://localhost:${PORT}/p/001`);
+});

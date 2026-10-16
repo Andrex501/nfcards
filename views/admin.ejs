@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración | Tarjetas NFC & QR Colombia</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20%220%22%20%22100%22%20%22100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+  <div class="admin-layout">
+    
+    <!-- Encabezado Principal -->
+    <header class="admin-header">
+      <div>
+        <h1 class="brand-title">
+          <span>⚡</span> NFC & QR Card Manager
+        </h1>
+        <p class="brand-subtitle">
+          Gestión de tarjetas inteligentes físicas NFC y códigos QR permanentes para comercios locales en Colombia
+        </p>
+      </div>
+
+      <!-- Resumen Métrico Rápido -->
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <div style="background: rgba(255,255,255,0.05); padding: 0.6rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-glass); text-align: center;">
+          <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Total</div>
+          <div style="font-size: 1.25rem; font-weight: 700; color: #fff;"><%= cards.length %></div>
+        </div>
+        <div style="background: var(--status-assigned-bg); padding: 0.6rem 1rem; border-radius: var(--radius-md); border: 1px solid rgba(59,130,246,0.3); text-align: center;">
+          <div style="font-size: 0.75rem; color: #93c5fd; text-transform: uppercase;">Asignadas</div>
+          <div style="font-size: 1.25rem; font-weight: 700; color: #60a5fa;">
+            <%= cards.filter(c => c.status === 'assigned').length %>
+          </div>
+        </div>
+        <div style="background: var(--status-available-bg); padding: 0.6rem 1rem; border-radius: var(--radius-md); border: 1px solid rgba(16,185,129,0.3); text-align: center;">
+          <div style="font-size: 0.75rem; color: #6ee7b7; text-transform: uppercase;">Disponibles</div>
+          <div style="font-size: 1.25rem; font-weight: 700; color: #10b981;">
+            <%= cards.filter(c => c.status === 'available').length %>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Notificaciones y Mensajes -->
+    <% if (message) { %>
+      <div class="alert alert-success">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span><%= message %></span>
+      </div>
+    <% } %>
+
+    <% if (error) { %>
+      <div class="alert alert-error">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+        <span><%= error %></span>
+      </div>
+    <% } %>
+
+    <!-- Grid Principal: Listado y Formulario -->
+    <div class="admin-grid">
+      
+      <!-- Columna Izquierda: Listado de Tarjetas -->
+      <section class="panel-box">
+        <div class="panel-title">
+          <span>Inventario de Tarjetas & Códigos QR</span>
+          
+          <!-- Formulario rápido para registrar nuevo Card ID -->
+          <form action="/admin/create" method="POST" style="display: flex; gap: 0.5rem; align-items: center;">
+            <input 
+              type="text" 
+              name="cardId" 
+              placeholder="Ej: 004" 
+              required 
+              style="width: 90px; padding: 0.4rem 0.6rem; font-size: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-glass); background: rgba(0,0,0,0.3); color: #fff;"
+            >
+            <button type="submit" class="btn-secondary btn-sm" title="Crear nueva tarjeta en blanco">
+              + Agregar
+            </button>
+          </form>
+        </div>
+
+        <% if (cards.length === 0) { %>
+          <div style="text-align: center; padding: 3rem 1rem; color: var(--text-dim);">
+            <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">No hay tarjetas registradas aún.</p>
+            <p style="font-size: 0.85rem;">Ingresa un ID en el campo superior para comenzar.</p>
+          </div>
+        <% } else { %>
+          <div class="cards-table-wrapper">
+            <table class="cards-table">
+              <thead>
+                <tr>
+                  <th style="width: 65px;">QR</th>
+                  <th>Card ID</th>
+                  <th>Negocio Asignado</th>
+                  <th>Estado</th>
+                  <th style="text-align: right;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% cards.forEach(card => { %>
+                  <tr style="<%= (selectedCard && selectedCard.cardId === card.cardId) ? 'background: rgba(99, 102, 241, 0.08);' : '' %>">
+                    
+                    <!-- Miniatura QR interactiva -->
+                    <td>
+                      <div 
+                        class="qr-thumbnail-box btn-open-qr" 
+                        title="Click para ampliar / descargar QR de la tarjeta <%= card.cardId %>"
+                        data-card-id="<%= card.cardId %>"
+                        data-business="<%= card.businessName || 'Tarjeta Disponible' %>"
+                        data-qr="<%= card.qrDataUrl %>"
+                        data-url="<%= card.publicUrl %>"
+                        onclick="showQrModalFromElement(this)"
+                      >
+                        <img src="<%= card.qrDataUrl %>" alt="QR <%= card.cardId %>" class="qr-thumb-img">
+                      </div>
+                    </td>
+
+                    <td>
+                      <strong style="color: #38bdf8; font-family: monospace; font-size: 1.05rem;">
+                        #<%= card.cardId %>
+                      </strong>
+                    </td>
+                    <td>
+                      <% if (card.businessName) { %>
+                        <div style="font-weight: 600; color: var(--text-main);"><%= card.businessName %></div>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">
+                          Actualizado: <%= new Date(card.updatedAt).toLocaleDateString('es-CO') %>
+                        </div>
+                      <% } else { %>
+                        <span style="color: var(--text-dim); font-style: italic;">Sin asignar</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <span class="status-pill <%= card.status %>">
+                        <%= card.status === 'assigned' ? 'Asignada' : 'Disponible' %>
+                      </span>
+                    </td>
+                    <td style="text-align: right;">
+                      <div style="display: inline-flex; gap: 0.35rem; justify-content: flex-end; align-items: center;">
+                        
+                        <!-- Botón Ver/Descargar QR -->
+                        <button 
+                          type="button" 
+                          class="btn-secondary btn-sm" 
+                          style="background: rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.3); color: #a5b4fc;"
+                          title="Ver y descargar código QR"
+                          data-card-id="<%= card.cardId %>"
+                          data-business="<%= card.businessName || 'Tarjeta Disponible' %>"
+                          data-qr="<%= card.qrDataUrl %>"
+                          data-url="<%= card.publicUrl %>"
+                          onclick="showQrModalFromElement(this)"
+                        >
+                          📷 QR
+                        </button>
+
+                        <!-- Botón Editar -->
+                        <a href="/admin?edit=<%= card.cardId %>" class="btn-secondary btn-sm" title="Editar datos">
+                          ✏️ Editar
+                        </a>
+
+                        <!-- Botón Probar enlace NFC / QR público -->
+                        <a href="/p/<%= card.cardId %>" target="_blank" class="btn-secondary btn-sm" title="Abrir página pública permanente">
+                          🔗 Probar
+                        </a>
+
+                        <!-- Botón Reset si está asignada -->
+                        <% if (card.status === 'assigned') { %>
+                          <form action="/admin/reset/<%= card.cardId %>" method="POST" onsubmit="return confirm('¿Deseas desvincular este negocio y dejar la tarjeta disponible?');" style="display:inline;">
+                            <button type="submit" class="btn-secondary btn-sm" style="color: #f87171;" title="Liberar tarjeta">
+                              ✕
+                            </button>
+                          </form>
+                        <% } %>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </section>
+
+      <!-- Columna Derecha: Formulario de Asignación / Actualización & Detalle QR -->
+      <section class="panel-box">
+        <div class="panel-title">
+          <span>
+            <%= selectedCard ? `Tarjeta #${selectedCard.cardId}` : 'Configurar Tarjeta' %>
+          </span>
+          <% if (selectedCard) { %>
+            <a href="/admin" style="font-size: 0.8rem; color: var(--text-dim); text-decoration: none;">+ Nueva selección</a>
+          <% } %>
+        </div>
+
+        <!-- Si hay una tarjeta seleccionada, mostrar panel destacado con su QR -->
+        <% if (selectedCard) { %>
+          <div class="selected-qr-card">
+            <div 
+              class="selected-qr-img-wrapper" 
+              style="cursor: pointer;" 
+              title="Click para ampliar"
+              data-card-id="<%= selectedCard.cardId %>"
+              data-business="<%= selectedCard.businessName || 'Tarjeta Disponible' %>"
+              data-qr="<%= selectedCard.qrDataUrl %>"
+              data-url="<%= selectedCard.publicUrl %>"
+              onclick="showQrModalFromElement(this)"
+            >
+              <img src="<%= selectedCard.qrDataUrl %>" alt="QR Tarjeta <%= selectedCard.cardId %>">
+            </div>
+            <div class="selected-qr-info">
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-dim); letter-spacing: 0.05em; font-weight: 700;">
+                Enlace QR / NFC Permanente
+              </div>
+              <div style="font-family: monospace; font-size: 0.82rem; color: #38bdf8; word-break: break-all; margin: 3px 0 8px;">
+                <%= selectedCard.publicUrl %>
+              </div>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <a href="/admin/qr/<%= selectedCard.cardId %>/download" class="btn-secondary btn-sm" style="color: #6ee7b7; border-color: rgba(16, 185, 129, 0.4);">
+                  ⬇️ Descargar PNG
+                </a>
+                <a href="/admin/qr/<%= selectedCard.cardId %>/print" target="_blank" class="btn-secondary btn-sm">
+                  🖨️ Imprimir
+                </a>
+              </div>
+            </div>
+          </div>
+        <% } %>
+
+        <form 
+          id="card-form"
+          action="/admin/update/<%= selectedCard ? selectedCard.cardId : '' %>" 
+          method="POST"
+          onsubmit="return validateForm(event)"
+        >
+          <!-- Selector / Input de Card ID -->
+          <div class="form-group">
+            <label class="form-label" for="form-cardId">ID de la Tarjeta Física (cardId)</label>
+            <% if (selectedCard) { %>
+              <input 
+                type="text" 
+                id="form-cardId"
+                class="form-input" 
+                value="<%= selectedCard.cardId %>" 
+                readonly 
+                style="opacity: 0.85; cursor: not-allowed; background: rgba(255,255,255,0.03);"
+              >
+            <% } else { %>
+              <input 
+                type="text" 
+                id="form-cardId"
+                class="form-input" 
+                placeholder="Ej: 001" 
+                required
+                oninput="updateFormAction(this.value)"
+              >
+              <small style="color: var(--text-dim); font-size: 0.78rem; display: block; margin-top: 4px;">
+                Ingresa el ID de la tarjeta física que deseas asignar o actualizar.
+              </small>
+            <% } %>
+          </div>
+
+          <!-- Nombre del Negocio -->
+          <div class="form-group">
+            <label class="form-label" for="businessName">Nombre del Negocio Local</label>
+            <input 
+              type="text" 
+              name="businessName" 
+              id="businessName" 
+              class="form-input" 
+              placeholder="Ej: Café Quindío Gourmet" 
+              value="<%= selectedCard ? selectedCard.businessName : '' %>" 
+              required
+            >
+          </div>
+
+          <!-- Número de WhatsApp -->
+          <div class="form-group">
+            <label class="form-label" for="whatsappNumber">Número de WhatsApp (Colombia)</label>
+            <input 
+              type="text" 
+              name="whatsappNumber" 
+              id="whatsappNumber" 
+              class="form-input" 
+              placeholder="Ej: 3001234567 o +57 300 123 4567" 
+              value="<%= selectedCard ? selectedCard.whatsappNumber : '' %>"
+              required
+            >
+            <small style="color: var(--text-dim); font-size: 0.78rem; display: block; margin-top: 4px;">
+              Acepta 10 dígitos locales (ej: 310...) o con prefijo internacional +57.
+            </small>
+          </div>
+
+          <!-- URL de Instagram -->
+          <div class="form-group">
+            <label class="form-label" for="instagramUrl">Perfil o Enlace de Instagram</label>
+            <input 
+              type="text" 
+              name="instagramUrl" 
+              id="instagramUrl" 
+              class="form-input" 
+              placeholder="Ej: @cafequindio o https://instagram.com/cafequindio" 
+              value="<%= selectedCard ? selectedCard.instagramUrl : '' %>"
+              required
+            >
+          </div>
+
+          <!-- Enlace de Reseñas de Google Maps -->
+          <div class="form-group">
+            <label class="form-label" for="googleReviewsUrl">Enlace de Reseñas de Google (Google Reviews)</label>
+            <input 
+              type="url" 
+              name="googleReviewsUrl" 
+              id="googleReviewsUrl" 
+              class="form-input" 
+              placeholder="Ej: https://g.page/r/... o enlace corto de Google Maps" 
+              value="<%= selectedCard ? selectedCard.googleReviewsUrl : '' %>"
+              required
+            >
+          </div>
+
+          <!-- Estado -->
+          <div class="form-group">
+            <label class="form-label" for="status">Estado de la Tarjeta</label>
+            <select name="status" id="status" class="form-input">
+              <option value="assigned" <%= (!selectedCard || selectedCard.status === 'assigned') ? 'selected' : '' %>>
+                Asignada (Activa para el público)
+              </option>
+              <option value="available" <%= (selectedCard && selectedCard.status === 'available') ? 'selected' : '' %>>
+                Disponible (No asignada)
+              </option>
+            </select>
+          </div>
+
+          <!-- Botón de Envío -->
+          <div class="btn-group">
+            <button type="submit" class="btn-primary" style="flex: 1;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              Guardar y Asignar Tarjeta
+            </button>
+            <% if (selectedCard) { %>
+              <a href="/p/<%= selectedCard.cardId %>" target="_blank" class="btn-secondary" style="align-items: center;">
+                Ver Perfil
+              </a>
+            <% } %>
+          </div>
+
+        </form>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- MODAL INTERACTIVO PARA VER Y DESCARGAR QR -->
+  <div id="qrModal" class="modal-overlay" onclick="closeQrModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeQrModal()">&times;</button>
+      
+      <div class="modal-header">
+        <span class="badge-card-id" id="modalCardBadge">Tarjeta #001</span>
+        <h3 id="modalBusinessName" style="font-size: 1.3rem; margin-top: 0.35rem; color: #fff;">Negocio</h3>
+        <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 2px;">
+          Código QR estático y permanente listo para imprimir en la tarjeta física NFC
+        </p>
+      </div>
+
+      <div class="modal-qr-container">
+        <img id="modalQrImg" src="" alt="Código QR en alta resolución">
+      </div>
+
+      <div class="modal-url-box">
+        <span id="modalPublicUrl" style="word-break: break-all; font-family: monospace; font-size: 0.85rem; color: #38bdf8;"></span>
+      </div>
+
+      <div class="modal-actions">
+        <a id="modalDownloadBtn" href="#" class="btn-primary" style="flex: 1; text-align: center; text-decoration: none;">
+          ⬇️ Descargar PNG (Alta Resolución)
+        </a>
+        <a id="modalPrintBtn" href="#" target="_blank" class="btn-secondary" style="text-decoration: none;">
+          🖨️ Imprimir
+        </a>
+        <button type="button" class="btn-secondary" onclick="copyModalUrl()">
+          <span id="copyUrlBtnText">📋 Copiar Link</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateFormAction(cardId) {
+      const form = document.getElementById('card-form');
+      if (cardId && cardId.trim()) {
+        form.action = '/admin/update/' + encodeURIComponent(cardId.trim());
+      }
+    }
+
+    function validateForm(event) {
+      const form = document.getElementById('card-form');
+      const cardIdInput = document.getElementById('form-cardId');
+      
+      if (!form.action || form.action.endsWith('/admin/update/') || form.action.endsWith('/admin/update')) {
+        const val = cardIdInput ? cardIdInput.value.trim() : '';
+        if (!val) {
+          alert('Por favor especifica un Card ID');
+          event.preventDefault();
+          return false;
+        }
+        form.action = '/admin/update/' + encodeURIComponent(val);
+      }
+      return true;
+    }
+
+    // Funciones del Modal de QR
+    let currentModalUrl = '';
+
+    function showQrModalFromElement(el) {
+      if (!el || !el.dataset) return;
+      const cardId = el.dataset.cardId || '';
+      const businessName = el.dataset.business || 'Tarjeta Disponible';
+      const qrDataUrl = el.dataset.qr || '';
+      const publicUrl = el.dataset.url || '';
+      openQrModal(cardId, businessName, qrDataUrl, publicUrl);
+    }
+
+    function openQrModal(cardId, businessName, qrDataUrl, publicUrl) {
+      currentModalUrl = publicUrl;
+      document.getElementById('modalCardBadge').textContent = 'Tarjeta #' + cardId;
+      document.getElementById('modalBusinessName').textContent = businessName || 'Tarjeta Disponible';
+      document.getElementById('modalQrImg').src = qrDataUrl;
+      document.getElementById('modalPublicUrl').textContent = publicUrl;
+      
+      document.getElementById('modalDownloadBtn').href = '/admin/qr/' + encodeURIComponent(cardId) + '/download';
+      document.getElementById('modalPrintBtn').href = '/admin/qr/' + encodeURIComponent(cardId) + '/print';
+      
+      document.getElementById('copyUrlBtnText').textContent = '📋 Copiar Link';
+      document.getElementById('qrModal').classList.add('active');
+    }
+
+    function closeQrModal(e) {
+      document.getElementById('qrModal').classList.remove('active');
+    }
+
+    function copyModalUrl() {
+      if (currentModalUrl) {
+        navigator.clipboard.writeText(currentModalUrl).then(() => {
+          const btnText = document.getElementById('copyUrlBtnText');
+          btnText.textContent = '✅ ¡Copiado!';
+          setTimeout(() => {
+            btnText.textContent = '📋 Copiar Link';
+          }, 2000);
+        });
+      }
+    }
+
+    // Cerrar modal con tecla ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeQrModal();
+    });
+  </script>
+</body>
+</html>
