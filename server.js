@@ -111,7 +111,12 @@ app.use('/admin', requireAuth);
  */
 app.get('/admin', async (req, res) => {
   try {
-    const cards = await Card.find().sort({ cardId: 1 });
+    let cards;
+    try {
+      cards = await Card.find().collation({ locale: 'en', numericOrdering: true }).sort({ cardId: 1 });
+    } catch (collationError) {
+      cards = await Card.find().sort({ cardId: 1 });
+    }
     const selectedId = req.query.edit;
     let selectedCard = null;
 
@@ -138,6 +143,16 @@ app.get('/admin', async (req, res) => {
         return cardObj;
       })
     );
+
+    // Ordenamiento numérico ascendente robusto (001, 002, 003... 010, 011)
+    cardsWithQr.sort((a, b) => {
+      const numA = parseInt(String(a.cardId).replace(/\D/g, ''), 10);
+      const numB = parseInt(String(b.cardId).replace(/\D/g, ''), 10);
+      if (!isNaN(numA) && !isNaN(numB) && numA !== numB) {
+        return numA - numB;
+      }
+      return String(a.cardId).localeCompare(String(b.cardId), undefined, { numeric: true, sensitivity: 'base' });
+    });
 
     if (selectedId) {
       selectedCard = cardsWithQr.find((c) => c.cardId === selectedId) || null;

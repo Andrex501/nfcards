@@ -121,6 +121,38 @@
             </p>
           </div>
         <% } else { %>
+          <!-- Buscador en tiempo real por ID de Tarjeta o Nombre de Negocio -->
+          <div class="inventory-search-row">
+            <div class="inventory-search-box">
+              <svg class="inventory-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input 
+                type="text" 
+                id="cardSearchInput" 
+                class="inventory-search-input" 
+                placeholder="Buscar por ID (ej: 001) o nombre del negocio..." 
+                autocomplete="off"
+                spellcheck="false"
+              >
+              <button 
+                type="button" 
+                id="cardSearchClear" 
+                class="inventory-search-clear" 
+                title="Limpiar búsqueda" 
+                aria-label="Limpiar búsqueda"
+                style="display: none;"
+                onclick="clearCardSearch()"
+              >
+                ✕
+              </button>
+            </div>
+            <div class="inventory-search-counter">
+              <span id="searchCounterText"><%= cards.length %> <%= cards.length === 1 ? 'tarjeta' : 'tarjetas' %></span>
+            </div>
+          </div>
+
           <div class="cards-table-wrapper">
             <table class="cards-table">
               <thead>
@@ -134,7 +166,11 @@
               </thead>
               <tbody>
                 <% cards.forEach(card => { %>
-                  <tr class="<%= (selectedCard && selectedCard.cardId === card.cardId) ? 'is-selected' : '' %>">
+                  <tr 
+                    class="card-row <%= (selectedCard && selectedCard.cardId === card.cardId) ? 'is-selected' : '' %>"
+                    data-card-id="<%= card.cardId %>"
+                    data-business="<%= card.businessName || '' %>"
+                  >
                     
                     <!-- Miniatura QR interactiva -->
                     <td class="cell-qr">
@@ -218,6 +254,24 @@
 
                   </tr>
                 <% }); %>
+
+                <!-- Fila de estado cuando no hay resultados de búsqueda -->
+                <tr id="noSearchResultsRow" class="no-results-row" style="display: none;">
+                  <td colspan="5">
+                    <div class="no-search-results">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        <line x1="8" y1="11" x2="14" y2="11"></line>
+                      </svg>
+                      <p class="no-search-results-title">No se encontraron tarjetas</p>
+                      <p class="no-search-results-desc">No hay coincidencias para "<strong id="noResultsQuery"></strong>"</p>
+                      <button type="button" class="btn-secondary btn-sm" onclick="clearCardSearch()" style="margin-top: 0.35rem;">
+                        Limpiar búsqueda
+                      </button>
+                    </div>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -528,6 +582,101 @@
     // Cerrar modal con tecla ESC
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeQrModal();
+    });
+
+    // ==========================================
+    // Buscador en Tiempo Real de Tarjetas
+    // ==========================================
+    function normalizeSearchText(str) {
+      if (!str) return '';
+      return String(str)
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Elimina acentos/tildes para búsqueda flexible
+        .trim();
+    }
+
+    function filterCards() {
+      const searchInput = document.getElementById('cardSearchInput');
+      if (!searchInput) return;
+
+      const clearBtn = document.getElementById('cardSearchClear');
+      const counterSpan = document.getElementById('searchCounterText');
+      const noResultsRow = document.getElementById('noSearchResultsRow');
+      const noResultsQuery = document.getElementById('noResultsQuery');
+
+      const rawQuery = searchInput.value.trim();
+      const cleanQuery = normalizeSearchText(rawQuery.replace(/^#/, ''));
+
+      // Mostrar u ocultar el botón de limpiar '✕'
+      if (clearBtn) {
+        clearBtn.style.display = rawQuery.length > 0 ? 'inline-flex' : 'none';
+      }
+
+      const rows = document.querySelectorAll('.cards-table tbody tr.card-row');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const cardId = normalizeSearchText(row.dataset.cardId || '');
+        const business = normalizeSearchText(row.dataset.business || '');
+
+        // Coincide por ID (ej: 001, 1), #ID o por nombre de negocio asignado
+        const matches = !cleanQuery || cardId.includes(cleanQuery) || business.includes(cleanQuery);
+
+        if (matches) {
+          row.classList.remove('is-hidden');
+          visibleCount++;
+        } else {
+          row.classList.add('is-hidden');
+        }
+      });
+
+      // Actualizar contador dinámico
+      if (counterSpan) {
+        if (cleanQuery) {
+          counterSpan.textContent = `${visibleCount} de ${rows.length} ${visibleCount === 1 ? 'tarjeta' : 'tarjetas'}`;
+        } else {
+          counterSpan.textContent = `${rows.length} ${rows.length === 1 ? 'tarjeta' : 'tarjetas'}`;
+        }
+      }
+
+      // Mostrar u ocultar fila de mensaje cuando no hay resultados
+      if (noResultsRow) {
+        if (visibleCount === 0 && rows.length > 0) {
+          noResultsRow.style.display = '';
+          if (noResultsQuery) noResultsQuery.textContent = rawQuery;
+        } else {
+          noResultsRow.style.display = 'none';
+        }
+      }
+    }
+
+    function clearCardSearch() {
+      const searchInput = document.getElementById('cardSearchInput');
+      if (searchInput) {
+        searchInput.value = '';
+        filterCards();
+        searchInput.focus();
+      }
+    }
+
+    // Inicializar eventos en el buscador y centrado de tarjeta activa
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('cardSearchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', filterCards);
+        searchInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            clearCardSearch();
+          }
+        });
+      }
+
+      // Centrar automáticamente en la tarjeta seleccionada para editar
+      const selectedRow = document.querySelector('.cards-table tbody tr.is-selected');
+      if (selectedRow) {
+        selectedRow.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
     });
   </script>
 </body>
