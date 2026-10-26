@@ -78,6 +78,22 @@
   --ig-sub: #d8b4fe;
   --ig-icon-bg: #27212b;
 
+  /* Facebook Señorial Azul Cobalto / Grafito */
+  --fb-bg: #0d1a2d;
+  --fb-hover: #13243d;
+  --fb-border: #1a3254;
+  --fb-text: #f0f6ff;
+  --fb-sub: #93c5fd;
+  --fb-icon-bg: #142845;
+
+  /* Ubicación / Google Maps Azul Noche Sobrio */
+  --loc-bg: #101a28;
+  --loc-hover: #17253a;
+  --loc-border: #1d334f;
+  --loc-text: #f8fafc;
+  --loc-sub: #93c5fd;
+  --loc-icon-bg: #18283e;
+
   /* Google Reviews Azul Noche / Oro Champagne */
   --gr-bg: #101a28;
   --gr-hover: #17253a;
@@ -675,6 +691,7 @@ img, svg {
     grid-template-areas: 
       "qr id status"
       "business business business"
+      "scans scans scans"
       "actions actions actions";
     gap: 0.65rem 0.85rem;
     align-items: center;
@@ -706,6 +723,13 @@ img, svg {
 
   .cell-business {
     grid-area: business;
+  }
+
+  .cell-scans {
+    grid-area: scans;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
   }
 
   .cell-actions {
@@ -906,6 +930,51 @@ img, svg {
   padding: 0.3rem 0.5rem;
   border-radius: var(--radius-xs);
   border: 1px solid var(--border-subtle);
+}
+
+.selected-qr-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.15rem;
+}
+
+.selected-qr-stats svg {
+  color: #93c5fd;
+  flex-shrink: 0;
+}
+
+.selected-qr-stats strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* Badge de Escaneos en Tabla Admin */
+.scans-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--border-subtle);
+  padding: 0.28rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  transition: all 0.15s ease;
+}
+
+.scans-pill:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: var(--border-strong);
+}
+
+.scans-pill svg {
+  color: #93c5fd;
+  flex-shrink: 0;
 }
 
 .selected-qr-actions {
@@ -1407,21 +1476,50 @@ img, svg {
   color: #c4b5fd;
 }
 
-/* Botón Reseñas Google Señorial */
-.btn-reviews {
-  background: var(--gr-bg);
-  border-color: var(--gr-border);
-  color: var(--gr-text);
+/* Botón Facebook Señorial */
+.btn-facebook {
+  background: var(--fb-bg);
+  border-color: var(--fb-border);
+  color: var(--fb-text);
 }
 
+.btn-facebook:hover {
+  background: var(--fb-hover);
+  border-color: #254673;
+}
+
+.btn-facebook .btn-icon {
+  background: var(--fb-icon-bg);
+  color: var(--fb-sub);
+}
+
+.btn-facebook .btn-subtitle {
+  color: var(--fb-sub);
+}
+
+/* Botón Ubicación del Local (Google Maps) Señorial */
+.btn-location,
+.btn-reviews {
+  background: var(--loc-bg);
+  border-color: var(--loc-border);
+  color: var(--loc-text);
+}
+
+.btn-location:hover,
 .btn-reviews:hover {
-  background: var(--gr-hover);
+  background: var(--loc-hover);
   border-color: #2b496d;
 }
 
+.btn-location .btn-icon,
 .btn-reviews .btn-icon {
-  background: var(--gr-icon-bg);
-  color: var(--gr-sub);
+  background: var(--loc-icon-bg);
+  color: var(--loc-sub);
+}
+
+.btn-location .btn-subtitle,
+.btn-reviews .btn-subtitle {
+  color: var(--loc-sub);
 }
 
 .stars-rating {
@@ -1446,6 +1544,42 @@ img, svg {
   text-align: center;
   border-top: 1px solid var(--border-subtle);
   padding-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Badge de Contador de Escaneos en Landing Móvil */
+.scan-counter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  padding: 0.42rem 0.95rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-subtle);
+  margin-bottom: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.scan-counter-badge:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-strong);
+}
+
+.scan-counter-icon {
+  color: #93c5fd;
+  flex-shrink: 0;
+}
+
+.scan-count-number {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .nfc-tag-indicator {

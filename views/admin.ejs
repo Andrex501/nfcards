@@ -56,6 +56,12 @@
             <%= cards.filter(c => c.status === 'available').length %>
           </div>
         </div>
+        <div class="metric-card">
+          <div class="metric-label">Total Escaneos</div>
+          <div class="metric-value" style="color: #93c5fd;">
+            <%= cards.reduce((acc, c) => acc + (c.scanCount || 0), 0) %>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -160,6 +166,7 @@
                   <th style="width: 58px;">QR</th>
                   <th style="width: 100px;">Card ID</th>
                   <th>Negocio Asignado</th>
+                  <th style="width: 105px; text-align: center;">Escaneos</th>
                   <th style="width: 120px;">Estado</th>
                   <th style="text-align: right; width: 180px;">Acciones</th>
                 </tr>
@@ -204,6 +211,17 @@
                           Sin negocio asignado
                         </span>
                       <% } %>
+                    </td>
+
+                    <!-- Escaneos / Visitas Totales -->
+                    <td class="cell-scans" style="text-align: center;">
+                      <span class="scans-pill" title="Total de lecturas/escaneos registrados">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <span><%= card.scanCount || 0 %></span>
+                      </span>
                     </td>
 
                     <!-- Estado -->
@@ -257,7 +275,7 @@
 
                 <!-- Fila de estado cuando no hay resultados de búsqueda -->
                 <tr id="noSearchResultsRow" class="no-results-row" style="display: none;">
-                  <td colspan="5">
+                  <td colspan="6">
                     <div class="no-search-results">
                       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
                         <circle cx="11" cy="11" r="8"></circle>
@@ -314,6 +332,13 @@
             <div class="selected-qr-info">
               <span class="selected-qr-label">Enlace Permanente NFC / QR</span>
               <div class="selected-qr-url"><%= selectedCard.publicUrl %></div>
+              <div class="selected-qr-stats">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <span>Escaneos registrados: <strong style="color: var(--text-primary);"><%= selectedCard.scanCount || 0 %></strong></span>
+              </div>
               <div class="selected-qr-actions">
                 <a href="/admin/qr/<%= selectedCard.cardId %>/download" class="btn-secondary btn-sm" style="color: var(--status-available-text);">
                   Descargar PNG
@@ -410,19 +435,40 @@
             >
           </div>
 
-          <!-- Enlace de Reseñas de Google Maps -->
+          <!-- URL de Facebook -->
+          <div class="form-group">
+            <label class="form-label" for="facebookUrl">
+              Enlace de Facebook <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
+            </label>
+            <input 
+              type="text" 
+              name="facebookUrl" 
+              id="facebookUrl" 
+              class="form-input" 
+              placeholder="Ej: https://facebook.com/cafequindio o @cafequindio" 
+              value="<%= selectedCard ? (selectedCard.facebookUrl || '') : '' %>"
+            >
+            <small class="form-hint">
+              Enlace directo al perfil o página oficial de Facebook.
+            </small>
+          </div>
+
+          <!-- Enlace de Ubicación de Google Maps -->
           <div class="form-group">
             <label class="form-label" for="googleReviewsUrl">
-              Enlace de Reseñas de Google (Google Reviews) <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
+              Enlace de Ubicación (Google Maps) <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
             </label>
             <input 
               type="url" 
               name="googleReviewsUrl" 
               id="googleReviewsUrl" 
               class="form-input" 
-              placeholder="Ej: https://g.page/r/... o enlace de reseña de Maps" 
+              placeholder="Ej: https://maps.app.goo.gl/... o enlace de Google Maps" 
               value="<%= selectedCard ? selectedCard.googleReviewsUrl : '' %>"
             >
+            <small class="form-hint">
+              Ubicación física del local para abrir directamente en Google Maps.
+            </small>
           </div>
 
           <!-- Estado -->

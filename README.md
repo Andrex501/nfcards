@@ -80,10 +80,10 @@ npm run dev
 | `GET /admin` | `GET` | Panel de control para listar tarjetas con sus **códigos QR visuales**, ver su estado y formulario de asignación. |
 | `GET /admin/qr/:cardId/download` | `GET` | **Descarga directa del código QR en PNG de alta resolución (1024x1024 px)** listo para imprenta o sticker físico. |
 | `GET /admin/qr/:cardId/print` | `GET` | Vista optimizada de impresión para generar el sticker o tarjeta física con su código QR e ID. |
-| `POST /admin/update/:cardId` | `POST` | Asigna o actualiza los datos del negocio (`businessName`, `instagramUrl`, `whatsappNumber`, `googleReviewsUrl`) y cambia su estado a `assigned`. |
+| `POST /admin/update/:cardId` | `POST` | Asigna o actualiza los datos del negocio (`businessName`, `instagramUrl`, `facebookUrl`, `whatsappNumber`, `googleReviewsUrl`) y cambia su estado a `assigned`. |
 | `POST /admin/create` | `POST` | Registra una nueva tarjeta en blanco (`cardId`) en estado `available` con su respectivo QR. |
 | `POST /admin/reset/:cardId` | `POST` | Restablece una tarjeta al estado `available` liberando los datos del negocio. |
-| `GET /p/:cardId` | `GET` | **Ruta pública escaneada desde NFC o QR.** <br>- Si está `available`: muestra *"Tarjeta disponible para activar"*. <br>- Si está `assigned`: muestra la **Landing Page Móvil** con botones para Instagram, WhatsApp y Reseñas de Google Maps. |
+| `GET /p/:cardId` | `GET` | **Ruta pública escaneada desde NFC o QR.** <br>- Si está `available`: muestra *"Tarjeta disponible para activar"*. <br>- Si está `assigned`: muestra la **Landing Page Móvil** con botones para WhatsApp, Instagram, Facebook y Ubicación del Local (Google Maps). |
 
 > 📌 **Garantía de Enlace Estático**: El código QR apunta siempre a la URL permanente `/p/:cardId`. Aunque los datos del negocio, números o enlaces se modifiquen infinidad de veces en el panel de administración, el código QR impreso físicamente sigue funcionando sin tener que reimprimir nada.
 

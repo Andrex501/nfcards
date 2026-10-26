@@ -280,7 +280,7 @@ app.post('/admin/create', async (req, res) => {
 app.post('/admin/update/:cardId', async (req, res) => {
   try {
     const { cardId } = req.params;
-    const { businessName, instagramUrl, whatsappNumber, googleReviewsUrl, status } = req.body;
+    const { businessName, instagramUrl, facebookUrl, whatsappNumber, googleReviewsUrl, status } = req.body;
 
     const newStatus = status || 'assigned';
     const cleanBusinessName = businessName ? businessName.trim() : '';
@@ -296,6 +296,7 @@ app.post('/admin/update/:cardId', async (req, res) => {
       {
         businessName: cleanBusinessName,
         instagramUrl: instagramUrl ? instagramUrl.trim() : '',
+        facebookUrl: facebookUrl ? facebookUrl.trim() : '',
         whatsappNumber: whatsappNumber ? whatsappNumber.trim() : '',
         googleReviewsUrl: googleReviewsUrl ? googleReviewsUrl.trim() : '',
         status: newStatus,
@@ -323,9 +324,11 @@ app.post('/admin/reset/:cardId', async (req, res) => {
       {
         businessName: '',
         instagramUrl: '',
+        facebookUrl: '',
         whatsappNumber: '',
         googleReviewsUrl: '',
         status: 'available',
+        scanCount: 0,
         updatedAt: new Date()
       }
     );
@@ -339,16 +342,24 @@ app.post('/admin/reset/:cardId', async (req, res) => {
 /**
  * GET /p/:cardId
  * Ruta pública escaneada desde el NFC / Código QR
+ * Incrementa automáticamente el contador de escaneos en cada lectura
  */
 app.get('/p/:cardId', async (req, res) => {
   try {
     const { cardId } = req.params;
-    const card = await Card.findOne({ cardId: cardId.trim() });
+    const cleanId = cardId.trim();
+
+    // Buscar e incrementar atómicamente el contador de escaneos/visitas
+    const card = await Card.findOneAndUpdate(
+      { cardId: cleanId },
+      { $inc: { scanCount: 1 } },
+      { new: true }
+    );
 
     // Si no existe la tarjeta en la BD o su estado es 'available'
     if (!card || card.status === 'available') {
       return res.render('available', {
-        cardId: cardId.trim(),
+        cardId: cleanId,
         cardExists: !!card
       });
     }

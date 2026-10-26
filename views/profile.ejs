@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title><%= card.businessName ? card.businessName : 'Tarjeta NFC' %> | Conexión Oficial</title>
-  <meta name="description" content="Canales digitales oficiales y verificación para <%= card.businessName || 'este comercio' %>. Conéctate por WhatsApp, Instagram y Reseñas de Google.">
+  <meta name="description" content="Canales digitales oficiales y verificación para <%= card.businessName || 'este comercio' %>. Conéctate por WhatsApp, Instagram, Facebook y Ubicación en Google Maps.">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20%220%22%20%22100%22%20%22100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
@@ -38,8 +38,9 @@
         // Verificaciones estrictas de existencia de canales (no nulos ni vacíos)
         const hasWhatsapp = Boolean(card.whatsappNumber && card.whatsappNumber.trim() !== '' && card.whatsappLink);
         const hasInstagram = Boolean(card.instagramUrl && card.instagramUrl.trim() !== '' && card.instagramLink);
-        const hasReviews = Boolean(card.googleReviewsUrl && card.googleReviewsUrl.trim() !== '');
-        const hasAnyAction = hasWhatsapp || hasInstagram || hasReviews;
+        const hasFacebook = Boolean(card.facebookUrl && card.facebookUrl.trim() !== '' && card.facebookLink);
+        const hasLocation = Boolean(card.googleReviewsUrl && card.googleReviewsUrl.trim() !== '');
+        const hasAnyAction = hasWhatsapp || hasInstagram || hasFacebook || hasLocation;
       %>
 
       <!-- Canales de Contacto Directo (Estrictamente Condicionales) -->
@@ -90,9 +91,30 @@
             </a>
           <% } %>
 
-          <!-- Canal Reseñas de Google Maps -->
-          <% if (hasReviews) { %>
-            <a href="<%= card.googleReviewsUrl %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-reviews" id="btn-google-reviews">
+          <!-- Canal Facebook Señorial -->
+          <% if (hasFacebook) { %>
+            <a href="<%= card.facebookLink %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-facebook" id="btn-facebook">
+              <div class="btn-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                </svg>
+              </div>
+              <div class="btn-text-group">
+                <span class="btn-title">Síguenos en Facebook</span>
+                <span class="btn-subtitle">Comunidad, noticias y eventos</span>
+              </div>
+              <div class="btn-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </div>
+            </a>
+          <% } %>
+
+          <!-- Canal Ubicación del Local (Google Maps) -->
+          <% if (hasLocation) { %>
+            <a href="<%= card.googleReviewsUrl %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-location" id="btn-location">
               <div class="btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -100,10 +122,8 @@
                 </svg>
               </div>
               <div class="btn-text-group">
-                <span class="btn-title">Califícanos en Google</span>
-                <div class="stars-rating">
-                  ★★★★★ <span>Excelente &bull; 5.0</span>
-                </div>
+                <span class="btn-title">Ubicación del Local</span>
+                <span class="btn-subtitle">Ver en Google Maps &bull; Cómo llegar</span>
               </div>
               <div class="btn-arrow">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -133,6 +153,15 @@
 
       <!-- Pie de la Tarjeta Móvil -->
       <footer class="mobile-footer">
+        <!-- Contador sutil y elegante de escaneos totales -->
+        <div class="scan-counter-badge" title="Total de visitas y lecturas registradas">
+          <svg class="scan-counter-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <span>Escaneos totales: <strong class="scan-count-number"><%= card.scanCount || 0 %></strong></span>
+        </div>
+
         <div class="nfc-tag-indicator">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
