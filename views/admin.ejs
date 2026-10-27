@@ -10,6 +10,45 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20%220%22%20%22100%22%20%22100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <style>
+    /* Ancho fijo y firme del panel lateral derecho */
+    .panel-form-box {
+      width: 380px !important;
+      min-width: 380px !important;
+      flex-shrink: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    @media (min-width: 1024px) {
+      .admin-grid {
+        grid-template-columns: 1fr 380px !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .panel-form-box {
+        width: 100% !important;
+        min-width: 100% !important;
+      }
+    }
+
+    /* Logo controlado: circular y dimensiones fijas */
+    .logo-preview-avatar {
+      width: 60px !important;
+      height: 60px !important;
+      min-width: 60px !important;
+      min-height: 60px !important;
+      border-radius: 50% !important;
+      overflow: hidden !important;
+    }
+
+    .logo-preview-avatar img {
+      width: 60px !important;
+      height: 60px !important;
+      object-fit: cover !important;
+      border-radius: 50% !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -314,7 +353,7 @@
               </section>
 
               <!-- Columna Derecha: Formulario de Asignación / Edición (Scroll Independiente) -->
-              <section class="panel-box panel-form-box">
+              <section class="panel-box panel-form-box" style="width: 380px; min-width: 380px; flex-shrink: 0; box-sizing: border-box;">
                 <div class="panel-header-row">
                   <h2 class="panel-title">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -332,61 +371,7 @@
                     <% } %>
                 </div>
 
-            
-
-
-
-
-         <!-- Si hay una tarjeta seleccionada, mostrar panel con su QR generado -->
-        <% if (selectedCard) { %>
-          <div class="selected-qr-card" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: nowrap; background: var(--bg-deep, #121212); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-color, #27272a); margin-bottom: 1.5rem;">
-            
-            <!-- Contenedor de la Imagen QR -->
-            <div class="selected-qr-img-wrapper" style="flex-shrink: 0; cursor: pointer;" title="Click para ampliar código QR"
-              data-card-id="<%= selectedCard.cardId %>"
-              data-business="<%= selectedCard.businessName || 'Tarjeta Disponible' %>"
-              data-qr="<%= selectedCard.qrDataUrl %>" data-url="<%= selectedCard.publicUrl %>"
-              onclick="showQrModalFromElement(this)">
-              <img src="<%= selectedCard.qrDataUrl %>" alt="QR Tarjeta <%= selectedCard.cardId %>" style="width: 75px; height: 75px; object-fit: contain; background: #fff; padding: 3px; border-radius: 6px; display: block;">
-            </div>
-
-            <!-- Información y Botones -->
-            <div class="selected-qr-info" style="flex: 1; min-width: 0;">
-              <span class="selected-qr-label" style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 0.15rem;">Enlace NFC / QR</span>
-              
-              <div class="selected-qr-url" style="font-size: 0.72rem; word-break: break-all; color: #93c5fd; margin-bottom: 0.3rem; line-height: 1.2;">
-                <%= selectedCard.publicUrl %>
-              </div>
-
-              <div class="selected-qr-stats" style="font-size: 0.72rem; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.3rem; color: var(--text-muted);">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                <span>Escaneos: <strong style="color: var(--text-primary);"><%= selectedCard.scanCount || 0 %></strong></span>
-              </div>
-
-              <div class="selected-qr-actions" style="display: flex; gap: 0.35rem;">
-                <a href="/admin/qr/<%= selectedCard.cardId %>/download" class="btn-secondary btn-sm"
-                  style="color: #4ade80; font-size: 0.68rem; padding: 0.2rem 0.4rem;">
-                  PNG
-                </a>
-                <a href="/admin/qr/<%= selectedCard.cardId %>/print" target="_blank"
-                  class="btn-secondary btn-sm" style="font-size: 0.68rem; padding: 0.2rem 0.4rem;">
-                  Imprimir
-                </a>
-              </div>
-            </div>
-
-          </div>
-        <% } %>
-
-
--
-
-
-
-                    <form id="card-form" action="/admin/update/<%= selectedCard ? selectedCard.cardId : '' %>"
+                <form id="card-form" action="/admin/update/<%= selectedCard ? selectedCard.cardId : '' %>"
                       method="POST" enctype="multipart/form-data" onsubmit="return validateForm(event)">
                       <!-- Selector / Input de Card ID -->
                       <div class="form-group">
@@ -412,16 +397,19 @@
                         </label>
                         <div class="logo-upload-container">
                           <div class="logo-preview-row">
-                            <div class="logo-preview-avatar" id="logoPreviewContainer" title="Vista previa del logo">
+                            <div class="logo-preview-avatar" id="logoPreviewContainer" title="Vista previa del logo"
+                              style="width: 60px; height: 60px; min-width: 60px; min-height: 60px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                               <% if (selectedCard && selectedCard.logoUrl) { %>
                                 <img id="logoPreviewImg" src="<%= selectedCard.logoUrl %>"
-                                  alt="Logo <%= selectedCard.businessName || '' %>">
+                                  alt="Logo <%= selectedCard.businessName || '' %>"
+                                  style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: block;">
                                 <span id="logoPreviewFallback" style="display: none;">
                                   <%= (selectedCard.businessName && selectedCard.businessName.length> 0) ?
                                     selectedCard.businessName.charAt(0).toUpperCase() : 'N' %>
                                 </span>
                                 <% } else { %>
-                                  <img id="logoPreviewImg" src="" alt="Previsualización" style="display: none;">
+                                  <img id="logoPreviewImg" src="" alt="Previsualización"
+                                    style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: none;">
                                   <span id="logoPreviewFallback">
                                     <%= (selectedCard && selectedCard.businessName && selectedCard.businessName.length>
                                       0) ? selectedCard.businessName.charAt(0).toUpperCase() : 'N' %>
@@ -440,8 +428,6 @@
                                   <span>Subir Imagen</span>
                                 </label>
 
-
-
                                 <input type="file" id="logoFileInput" name="logoFile"
                                   accept="image/png, image/jpeg, image/webp, image/svg+xml, image/gif"
                                   style="display: none;" onchange="handleLogoFileSelect(this)">
@@ -452,11 +438,8 @@
                                   ✕ Quitar
                                 </button>
                               </div>
-
-
                             </div>
                             <input type="hidden" name="removeLogo" id="removeLogo" value="false">
-                      
                           </div>
                         </div>
 
@@ -470,16 +453,16 @@
                           <small class="form-hint">Enlace https directo a una imagen JPG, PNG, WebP o SVG.</small>
                         </div>
                       </div>
-            </div>
 
-            <!-- Nombre del Negocio -->
-            <div class="form-group">
-              <label class="form-label" for="businessName">
-                Nombre del Negocio Local <span id="businessNameRequiredMarker" style="color: #fca5a5;">*</span>
-              </label>
-              <input type="text" name="businessName" id="businessName" class="form-input"
-                placeholder="Ej: Café Quindío Gourmet"
-                value="<%= (selectedCard && selectedCard.businessName) ? selectedCard.businessName : '' %>">
+                      <!-- Nombre del Negocio -->
+                      <div class="form-group">
+                        <label class="form-label" for="businessName">
+                          Nombre del Negocio Local <span id="businessNameRequiredMarker" style="color: #fca5a5;">*</span>
+                        </label>
+                        <input type="text" name="businessName" id="businessName" class="form-input"
+                          placeholder="Ej: Café Quindío Gourmet"
+                          value="<%= (selectedCard && selectedCard.businessName) ? selectedCard.businessName : '' %>">
+                      </div>
 
               <!-- Número de WhatsApp Principal -->
               <div class="form-group">
@@ -664,6 +647,7 @@
           const fallback = document.getElementById('logoPreviewFallback');
           const removeBtn = document.getElementById('removeLogoBtn');
           const removeHidden = document.getElementById('removeLogo');
+          const urlInput = document.getElementById('logoUrlCustom');
 
           if (img) {
             img.src = e.target.result;
@@ -672,6 +656,7 @@
           if (fallback) fallback.style.display = 'none';
           if (removeBtn) removeBtn.style.display = 'inline-flex';
           if (removeHidden) removeHidden.value = 'false';
+          if (urlInput) urlInput.value = '';
         };
         reader.readAsDataURL(file);
       }
@@ -710,6 +695,7 @@
       }
     }
 
+    // Botón "Quitar" funcional: Limpia input de archivo, borra previsualización y activa parámetro removeLogo para el backend
     function handleRemoveLogo() {
       const img = document.getElementById('logoPreviewImg');
       const fallback = document.getElementById('logoPreviewFallback');
@@ -718,15 +704,30 @@
       const fileInput = document.getElementById('logoFileInput');
       const urlInput = document.getElementById('logoUrlCustom');
 
-      if (fileInput) fileInput.value = '';
-      if (urlInput) urlInput.value = '';
-      if (removeHidden) removeHidden.value = 'true';
+      // 1. Limpie el input de tipo archivo
+      if (fileInput) {
+        fileInput.value = '';
+      }
+      if (urlInput) {
+        urlInput.value = '';
+      }
+
+      // 2. Borre la previsualización de la imagen
       if (img) {
         img.src = '';
         img.style.display = 'none';
       }
-      if (fallback) fallback.style.display = 'flex';
-      if (removeBtn) removeBtn.style.display = 'none';
+      if (fallback) {
+        fallback.style.display = 'flex';
+      }
+      if (removeBtn) {
+        removeBtn.style.display = 'none';
+      }
+
+      // 3. Active o envíe el parámetro necesario para desvincular el logo correctamente en el backend
+      if (removeHidden) {
+        removeHidden.value = 'true';
+      }
     }
 
     function toggleLogoUrlInput() {
