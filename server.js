@@ -6,56 +6,21 @@ const Card = require('./models/Card');
 
 const QRCode = require('qrcode');
 const session = require('express-session');
-const multer = require('multer');
 const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Asegurar que la carpeta de subidas de logos exista
-const uploadDir = path.join(__dirname, 'public', 'uploads', 'logos');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configuración de almacenamiento Multer para Logos de Negocios
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const cardId = (req.params.cardId || 'card').replace(/[^a-zA-Z0-9_-]/g, '');
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname).toLowerCase() || '.png';
-    cb(null, `logo-${cardId}-${uniqueSuffix}${ext}`);
-  }
-});
-
-const fileFilter = (req, file, cb) => {
-  // Aceptar formatos comunes de imagen
-  const allowed = /jpeg|jpg|png|webp|svg|gif/i;
-  const isMime = allowed.test(file.mimetype);
-  const isExt = allowed.test(path.extname(file.originalname).toLowerCase());
-  if (isMime || isExt) {
-    cb(null, true);
-  } else {
-    cb(new Error('Solo se permiten imágenes (JPG, PNG, WebP, SVG, GIF)'));
-  }
-};
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB máximo
-  fileFilter
-});
-
 const MONGODB_URI = 'mongodb://nithsonbarragan03_db_user:chloe12345@ac-woajqza-shard-00-00.ftjxrxh.mongodb.net:27017,ac-woajqza-shard-00-01.ftjxrxh.mongodb.net:27017,ac-woajqza-shard-00-02.ftjxrxh.mongodb.net:27017/?ssl=true&replicaSet=atlas-m8wmr1-shard-0&authSource=admin';
 
+// Configuración de middlewares con límite ampliado para imágenes Base64
+app.use(express.urlencoded({ extended: true, limit: '25mb' }));
+app.use(express.json({ limit: '25mb' }));
 
-// Configuración de middlewares
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+// Servir archivos estáticos desde ruta absoluta garantizada
+const publicDirectory = path.join(__dirname, 'public');
+app.use(express.static(publicDirectory));
+app.use('/public', express.static(publicDirectory));
 
 // Configuración de Sesiones
 app.use(
@@ -177,6 +142,13 @@ app.get('/admin', async (req, res) => {
         });
 
         const cardObj = card.toObject({ virtuals: true });
+        if (cardObj.logoUrl && typeof cardObj.logoUrl === 'string') {
+          let cleanLogo = cardObj.logoUrl.trim();
+          if (cleanLogo && !cleanLogo.startsWith('data:') && !cleanLogo.startsWith('http://') && !cleanLogo.startsWith('https://') && !cleanLogo.startsWith('/')) {
+            cleanLogo = '/' + cleanLogo.replace(/\\/g, '/');
+          }
+          cardObj.logoUrl = cleanLogo;
+        }
         cardObj.publicUrl = publicUrl;
         cardObj.qrDataUrl = qrDataUrl;
         return cardObj;
@@ -207,6 +179,13 @@ app.get('/admin', async (req, res) => {
           });
           selectedCard = { ...dbCard.toObject({ virtuals: true }), publicUrl, qrDataUrl };
         }
+      }
+      if (selectedCard && selectedCard.logoUrl && typeof selectedCard.logoUrl === 'string') {
+        let cleanLogo = selectedCard.logoUrl.trim();
+        if (cleanLogo && !cleanLogo.startsWith('data:') && !cleanLogo.startsWith('http://') && !cleanLogo.startsWith('https://') && !cleanLogo.startsWith('/')) {
+          cleanLogo = '/' + cleanLogo.replace(/\\/g, '/');
+        }
+        selectedCard.logoUrl = cleanLogo;
       }
     }
 
@@ -315,17 +294,9 @@ app.post('/admin/create', async (req, res) => {
 /**
  * POST /admin/update/:cardId
  * Actualiza los datos del negocio y cambia el estado a 'assigned'
- * Permite subir archivo de logo o vincular una URL
+ * Permite guardar logo en formato Base64 o URL directa
  */
-app.post('/admin/update/:cardId', (req, res, next) => {
-  upload.single('logoFile')(req, res, (err) => {
-    if (err) {
-      console.error('Error al procesar subida de logo:', err);
-      return res.redirect(`/admin?err=${encodeURIComponent('Error de imagen: ' + err.message)}&edit=${encodeURIComponent(req.params.cardId ? req.params.cardId.trim() : '')}`);
-    }
-    next();
-  });
-}, async (req, res) => {
+app.post('/admin/update/:cardId', async (req, res) => {
   try {
     const { cardId } = req.params;
     const {
@@ -337,6 +308,7 @@ app.post('/admin/update/:cardId', (req, res, next) => {
       facebookUrl,
       tiktokUrl,
       googleReviewsUrl,
+      logoBase64,
       logoUrlCustom,
       removeLogo,
       status
@@ -356,12 +328,16 @@ app.post('/admin/update/:cardId', (req, res, next) => {
 
     if (removeLogo === 'true' || removeLogo === '1') {
       finalLogoUrl = '';
-    } else if (req.file) {
-      // Se subió un archivo físico nuevo
-      finalLogoUrl = `/uploads/logos/${req.file.filename}`;
+    } else if (typeof logoBase64 === 'string' && logoBase64.trim().startsWith('data:image/')) {
+      // Imagen convertida a Base64 en el cliente (MongoDB Atlas)
+      finalLogoUrl = logoBase64.trim();
     } else if (typeof logoUrlCustom === 'string' && logoUrlCustom.trim() !== '') {
       // Se especificó una URL personalizada
-      finalLogoUrl = logoUrlCustom.trim();
+      let custom = logoUrlCustom.trim();
+      if (!custom.startsWith('data:') && !custom.startsWith('http://') && !custom.startsWith('https://') && !custom.startsWith('/')) {
+        custom = '/' + custom.replace(/\\/g, '/');
+      }
+      finalLogoUrl = custom;
     }
 
     // Buscar y actualizar o crear si no existiese

@@ -235,9 +235,13 @@
                               <td class="cell-business">
                                 <% if (card.businessName) { %>
                                   <div class="table-business-cell">
-                                    <% if (card.logoUrl) { %>
+                                    <% if (card.logoUrl) { 
+                                        const logoSrc = (card.logoUrl.startsWith('data:') || card.logoUrl.startsWith('http://') || card.logoUrl.startsWith('https://') || card.logoUrl.startsWith('/'))
+                                          ? card.logoUrl 
+                                          : ('/' + card.logoUrl);
+                                    %>
                                       <div class="table-business-logo" title="Logo de <%= card.businessName %>">
-                                        <img src="<%= card.logoUrl %>" alt="Logo <%= card.businessName %>"
+                                        <img src="<%= logoSrc %>" alt="Logo <%= card.businessName %>"
                                           onerror="this.parentElement.style.display='none';">
                                       </div>
                                       <% } %>
@@ -353,7 +357,8 @@
               </section>
 
               <!-- Columna Derecha: Formulario de Asignación / Edición (Scroll Independiente) -->
-              <section class="panel-box panel-form-box" style="width: 380px; min-width: 380px; flex-shrink: 0; box-sizing: border-box;">
+              <section class="panel-box panel-form-box"
+                style="width: 380px; min-width: 380px; flex-shrink: 0; box-sizing: border-box;">
                 <div class="panel-header-row">
                   <h2 class="panel-title">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -371,228 +376,244 @@
                     <% } %>
                 </div>
 
-                <form id="card-form" action="/admin/update/<%= selectedCard ? selectedCard.cardId : '' %>"
-                      method="POST" enctype="multipart/form-data" onsubmit="return validateForm(event)">
-                      <!-- Selector / Input de Card ID -->
-                      <div class="form-group">
-                        <label class="form-label" for="form-cardId">ID de la Tarjeta Física (cardId)</label>
-                        <% if (selectedCard) { %>
-                          <input type="text" id="form-cardId" class="form-input" value="<%= selectedCard.cardId %>"
-                            readonly style="opacity: 0.8; cursor: not-allowed; background: var(--bg-deep);">
-                          <% } else { %>
-                            <input type="text" id="form-cardId" class="form-input" placeholder="Ej: 001" required
-                              oninput="updateFormAction(this.value)">
-                            <small class="form-hint">
-                              Especifica el identificador grabado físicamente en la tarjeta NFC o etiqueta QR.
-                            </small>
-                            <% } %>
-                      </div>
+                <form id="card-form" action="/admin/update/<%= selectedCard ? selectedCard.cardId : '' %>" method="POST"
+                  onsubmit="return validateForm(event)">
+                  <!-- Selector / Input de Card ID -->
+                  <div class="form-group">
+                    <label class="form-label" for="form-cardId">ID de la Tarjeta Física (cardId)</label>
+                    <% if (selectedCard) { %>
+                      <input type="text" id="form-cardId" class="form-input" value="<%= selectedCard.cardId %>" readonly
+                        style="opacity: 0.8; cursor: not-allowed; background: var(--bg-deep);">
+                      <% } else { %>
+                        <input type="text" id="form-cardId" class="form-input" placeholder="Ej: 001" required
+                          oninput="updateFormAction(this.value)">
+                        <small class="form-hint">
+                          Especifica el identificador grabado físicamente en la tarjeta NFC o etiqueta QR.
+                        </small>
+                        <% } %>
+                  </div>
 
-                      <!-- Logo o Imagen de Perfil del Negocio -->
-                      <div class="form-group">
-                        <label class="form-label">
-                          Logo del Negocio <span
-                            style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional - Imagen
-                            circular)</span>
-                        </label>
-                        <div class="logo-upload-container">
-                          <div class="logo-preview-row">
-                            <div class="logo-preview-avatar" id="logoPreviewContainer" title="Vista previa del logo"
-                              style="width: 60px; height: 60px; min-width: 60px; min-height: 60px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                              <% if (selectedCard && selectedCard.logoUrl) { %>
-                                <img id="logoPreviewImg" src="<%= selectedCard.logoUrl %>"
-                                  alt="Logo <%= selectedCard.businessName || '' %>"
-                                  style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: block;">
-                                <span id="logoPreviewFallback" style="display: none;">
-                                  <%= (selectedCard.businessName && selectedCard.businessName.length> 0) ?
-                                    selectedCard.businessName.charAt(0).toUpperCase() : 'N' %>
-                                </span>
-                                <% } else { %>
-                                  <img id="logoPreviewImg" src="" alt="Previsualización"
-                                    style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: none;">
-                                  <span id="logoPreviewFallback">
-                                    <%= (selectedCard && selectedCard.businessName && selectedCard.businessName.length>
-                                      0) ? selectedCard.businessName.charAt(0).toUpperCase() : 'N' %>
-                                  </span>
-                                  <% } %>
-                            </div>
-                            <div class="logo-upload-controls">
-                              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-                                <label for="logoFileInput" class="file-upload-btn-label">
-                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="17 8 12 3 7 8"></polyline>
-                                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                                  </svg>
-                                  <span>Subir Imagen</span>
-                                </label>
+                  <!-- Logo o Imagen de Perfil del Negocio -->
+                  <div class="form-group">
+                    <label class="form-label">
+                      Logo del Negocio <span
+                        style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional - Imagen
+                        circular)</span>
+                    </label>
+                    <div class="logo-upload-container">
+                      <div class="logo-preview-row">
+                        <div class="logo-preview-avatar" id="logoPreviewContainer" title="Vista previa del logo"
+                          style="width: 60px; height: 60px; min-width: 60px; min-height: 60px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                          <% 
+                            const previewLogoSrc = (selectedCard && selectedCard.logoUrl)
+                              ? ((selectedCard.logoUrl.startsWith('data:') || selectedCard.logoUrl.startsWith('http://') || selectedCard.logoUrl.startsWith('https://') || selectedCard.logoUrl.startsWith('/'))
+                                  ? selectedCard.logoUrl
+                                  : ('/' + selectedCard.logoUrl))
+                              : '';
+                          %>
+                          <% if (selectedCard && selectedCard.logoUrl) { %>
+                            <img id="logoPreviewImg" src="<%= previewLogoSrc %>"
+                              alt="Logo <%= selectedCard.businessName || '' %>"
+                              style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: block;">
+                            <span id="logoPreviewFallback" style="display: none;">
+                              <%= (selectedCard.businessName && selectedCard.businessName.length> 0) ?
+                                selectedCard.businessName.charAt(0).toUpperCase() : 'N' %>
+                            </span>
+                            <% } else { %>
+                              <img id="logoPreviewImg" src="" alt="Previsualización"
+                                style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: none;">
+                              <span id="logoPreviewFallback">
+                                <%= (selectedCard && selectedCard.businessName && selectedCard.businessName.length>
+                                  0) ? selectedCard.businessName.charAt(0).toUpperCase() : 'N' %>
+                              </span>
+                              <% } %>
+                        </div>
+                        <div class="logo-upload-controls">
+                          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                            <label for="logoFileInput" class="file-upload-btn-label">
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                              </svg>
+                              <span>Subir Imagen</span>
+                            </label>
 
-                                <input type="file" id="logoFileInput" name="logoFile"
-                                  accept="image/png, image/jpeg, image/webp, image/svg+xml, image/gif"
-                                  style="display: none;" onchange="handleLogoFileSelect(this)">
+                            <input type="file" id="logoFileInput"
+                              accept="image/png, image/jpeg, image/webp, image/svg+xml, image/gif"
+                              style="display: none;" onchange="handleLogoFileSelect(this)">
 
-                                <button type="button" id="removeLogoBtn" class="btn-secondary btn-sm"
-                                  style="<%= (selectedCard && selectedCard.logoUrl) ? '' : 'display: none;' %> font-size: 0.85rem; color: var(--btn-danger-text);"
-                                  onclick="handleRemoveLogo()" title="Eliminar logo actual">
-                                  ✕ Quitar
-                                </button>
-                              </div>
-                            </div>
-                            <input type="hidden" name="removeLogo" id="removeLogo" value="false">
+                            <button type="button" id="removeLogoBtn" class="btn-secondary btn-sm"
+                              style="<%= (selectedCard && selectedCard.logoUrl) ? '' : 'display: none;' %> font-size: 0.85rem; color: var(--btn-danger-text);"
+                              onclick="handleRemoveLogo()" title="Eliminar logo actual">
+                              ✕ Quitar
+                            </button>
                           </div>
                         </div>
-
-                        <!-- Campo URL directa opcional -->
-                        <div id="logoUrlWrapper"
-                          style="<%= (selectedCard && selectedCard.logoUrl && !selectedCard.logoUrl.startsWith('/uploads/')) ? '' : 'display: none;' %> margin-top: 0.4rem;">
-                          <input type="url" name="logoUrlCustom" id="logoUrlCustom" class="form-input"
-                            placeholder="https://ejemplo.com/logo.png"
-                            value="<%= (selectedCard && selectedCard.logoUrl && !selectedCard.logoUrl.startsWith('/uploads/')) ? selectedCard.logoUrl : '' %>"
-                            oninput="handleLogoUrlInput(this.value)" style="font-size: 0.82rem; min-height: 38px;">
-                          <small class="form-hint">Enlace https directo a una imagen JPG, PNG, WebP o SVG.</small>
-                        </div>
+                        <!-- String Base64 generado en cliente para MongoDB -->
+                        <input type="hidden" name="logoBase64" id="logoBase64" value="">
+                        <input type="hidden" name="removeLogo" id="removeLogo" value="false">
                       </div>
+                    </div>
 
-                      <!-- Nombre del Negocio -->
-                      <div class="form-group">
-                        <label class="form-label" for="businessName">
-                          Nombre del Negocio Local <span id="businessNameRequiredMarker" style="color: #fca5a5;">*</span>
-                        </label>
-                        <input type="text" name="businessName" id="businessName" class="form-input"
-                          placeholder="Ej: Café Quindío Gourmet"
-                          value="<%= (selectedCard && selectedCard.businessName) ? selectedCard.businessName : '' %>">
-                      </div>
+                    <!-- Campo URL directa opcional -->
+                    <% 
+                      const isCustomExternalLogo = Boolean(selectedCard && selectedCard.logoUrl && !selectedCard.logoUrl.startsWith('data:') && !selectedCard.logoUrl.includes('uploads/'));
+                    %>
+                    <div id="logoUrlWrapper"
+                      style="<%= isCustomExternalLogo ? '' : 'display: none;' %> margin-top: 0.4rem;">
+                      <input type="url" name="logoUrlCustom" id="logoUrlCustom" class="form-input"
+                        placeholder="https://ejemplo.com/logo.png"
+                        value="<%= isCustomExternalLogo ? selectedCard.logoUrl : '' %>"
+                        oninput="handleLogoUrlInput(this.value)" style="font-size: 0.82rem; min-height: 38px;">
+                      <small class="form-hint">Enlace https directo a una imagen JPG, PNG, WebP o SVG.</small>
+                    </div>
+                  </div>
 
-              <!-- Número de WhatsApp Principal -->
-              <div class="form-group">
-                <label class="form-label" for="whatsappNumber">
-                  Número de WhatsApp (Principal) <span
-                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
-                </label>
-                <input type="text" name="whatsappNumber" id="whatsappNumber" class="form-input"
-                  placeholder="Ej: 3001234567 o +57 300 123 4567"
-                  value="<%= selectedCard ? selectedCard.whatsappNumber : '' %>">
-                <small class="form-hint">
-                  Línea principal a 10 dígitos (ej: 310...) o con código internacional (+57).
-                </small>
-              </div>
+                  <!-- Nombre del Negocio -->
+                  <div class="form-group">
+                    <label class="form-label" for="businessName">
+                      Nombre del Negocio Local <span id="businessNameRequiredMarker" style="color: #fca5a5;">*</span>
+                    </label>
+                    <input type="text" name="businessName" id="businessName" class="form-input"
+                      placeholder="Ej: Café Quindío Gourmet"
+                      value="<%= (selectedCard && selectedCard.businessName) ? selectedCard.businessName : '' %>">
+                  </div>
 
-              <!-- Segundo Número de WhatsApp -->
-              <div class="form-group">
-                <label class="form-label" for="whatsappNumber2">
-                  Segundo Número de WhatsApp <span
-                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
-                </label>
-                <input type="text" name="whatsappNumber2" id="whatsappNumber2" class="form-input"
-                  placeholder="Ej: 3109876543 o +57 310 987 6543"
-                  value="<%= selectedCard ? (selectedCard.whatsappNumber2 || '') : '' %>">
-                <small class="form-hint">
-                  Línea secundaria para pedidos, ventas o soporte directo.
-                </small>
-              </div>
+                  <!-- Número de WhatsApp Principal -->
+                  <div class="form-group">
+                    <label class="form-label" for="whatsappNumber">
+                      Número de WhatsApp (Principal) <span
+                        style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
+                    </label>
+                    <input type="text" name="whatsappNumber" id="whatsappNumber" class="form-input"
+                      placeholder="Ej: 3001234567 o +57 300 123 4567"
+                      value="<%= selectedCard ? selectedCard.whatsappNumber : '' %>">
+                    <small class="form-hint">
+                      Línea principal a 10 dígitos (ej: 310...) o con código internacional (+57).
+                    </small>
+                  </div>
 
-              <!-- URL de Instagram -->
-              <div class="form-group">
-                <label class="form-label" for="instagramUrl">
-                  Perfil o Enlace de Instagram <span
-                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
-                </label>
-                <input type="text" name="instagramUrl" id="instagramUrl" class="form-input"
-                  placeholder="Ej: @cafequindio o https://instagram.com/cafequindio"
-                  value="<%= selectedCard ? selectedCard.instagramUrl : '' %>">
-              </div>
+                  <!-- Segundo Número de WhatsApp -->
+                  <div class="form-group">
+                    <label class="form-label" for="whatsappNumber2">
+                      Segundo Número de WhatsApp <span
+                        style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
+                    </label>
+                    <input type="text" name="whatsappNumber2" id="whatsappNumber2" class="form-input"
+                      placeholder="Ej: 3109876543 o +57 310 987 6543"
+                      value="<%= selectedCard ? (selectedCard.whatsappNumber2 || '') : '' %>">
+                    <small class="form-hint">
+                      Línea secundaria para pedidos, ventas o soporte directo.
+                    </small>
+                  </div>
 
-              <!-- URL de Facebook -->
-              <div class="form-group">
-                <label class="form-label" for="facebookUrl">
-                  Enlace de Facebook <span
-                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
-                </label>
-                <input type="text" name="facebookUrl" id="facebookUrl" class="form-input"
-                  placeholder="Ej: https://facebook.com/cafequindio o @cafequindio"
-                  value="<%= selectedCard ? (selectedCard.facebookUrl || '') : '' %>">
-                <small class="form-hint">
-                  Enlace directo al perfil o página oficial de Facebook.
-                </small>
-              </div>
+                  <!-- URL de Instagram -->
+                  <div class="form-group">
+                    <label class="form-label" for="instagramUrl">
+                      Perfil o Enlace de Instagram <span
+                        style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
+                    </label>
+                    <input type="text" name="instagramUrl" id="instagramUrl" class="form-input"
+                      placeholder="Ej: @cafequindio o https://instagram.com/cafequindio"
+                      value="<%= selectedCard ? selectedCard.instagramUrl : '' %>">
+                  </div>
 
-              <!-- URL de TikTok -->
-              <div class="form-group">
-                <label class="form-label" for="tiktokUrl">
-                  Perfil o Enlace de TikTok <span
-                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
-                </label>
-                <input type="text" name="tiktokUrl" id="tiktokUrl" class="form-input"
-                  placeholder="Ej: @cafequindio o https://tiktok.com/@cafequindio"
-                  value="<%= selectedCard ? (selectedCard.tiktokUrl || '') : '' %>">
-                <small class="form-hint">
-                  Enlace directo al perfil o videos oficiales de TikTok.
-                </small>
-              </div>
+                  <!-- URL de Facebook -->
+                  <div class="form-group">
+                    <label class="form-label" for="facebookUrl">
+                      Enlace de Facebook <span
+                        style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
+                    </label>
+                    <input type="text" name="facebookUrl" id="facebookUrl" class="form-input"
+                      placeholder="Ej: https://facebook.com/cafequindio o @cafequindio"
+                      value="<%= selectedCard ? (selectedCard.facebookUrl || '') : '' %>">
+                    <small class="form-hint">
+                      Enlace directo al perfil o página oficial de Facebook.
+                    </small>
+                  </div>
 
-              <!-- Ubicación Personalizada del Local -->
-              <div class="form-group">
-                <label class="form-label" for="location">
-                  Ubicación del Local <span
-                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional - Visible bajo el
-                    nombre)</span>
-                </label>
-                <input type="text" name="location" id="location" class="form-input"
-                  placeholder="Ej: Guapotá, Santander o Calle 10 # 5-20, Bogotá"
-                  value="<%= selectedCard ? (selectedCard.location || '') : '' %>">
-                <small class="form-hint">
-                  Se mostrará directamente en la tarjeta pública en la etiqueta debajo del nombre del comercio.
-                </small>
-              </div>
+                  <!-- URL de TikTok -->
+                  <div class="form-group">
+                    <label class="form-label" for="tiktokUrl">
+                      Perfil o Enlace de TikTok <span
+                        style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
+                    </label>
+                    <input type="text" name="tiktokUrl" id="tiktokUrl" class="form-input"
+                      placeholder="Ej: @cafequindio o https://tiktok.com/@cafequindio"
+                      value="<%= selectedCard ? (selectedCard.tiktokUrl || '') : '' %>">
+                    <small class="form-hint">
+                      Enlace directo al perfil o videos oficiales de TikTok.
+                    </small>
+                  </div>
 
-              <!-- Enlace de Ubicación de Google Maps -->
-              <div class="form-group">
-                <label class="form-label" for="googleReviewsUrl">
-                  Enlace de Google Maps <span
-                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional - Botón de
-                    Navegación)</span>
-                </label>
-                <input type="url" name="googleReviewsUrl" id="googleReviewsUrl" class="form-input"
-                  placeholder="Ej: https://maps.app.goo.gl/... o enlace de Google Maps"
-                  value="<%= selectedCard ? (selectedCard.googleReviewsUrl || '') : '' %>">
-                <small class="form-hint">
-                  Enlace directo para abrir la app de Google Maps en el botón "Ubicación del Local".
-                </small>
-              </div>
+                  <!-- Ubicación Personalizada del Local -->
+                  <div class="form-group">
+                    <label class="form-label" for="location">
+                      Ubicación del Local <span
+                        style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional - Visible bajo
+                        el
+                        nombre)</span>
+                    </label>
+                    <input type="text" name="location" id="location" class="form-input"
+                      placeholder="Ej: Guapotá, Santander o Calle 10 # 5-20, Bogotá"
+                      value="<%= selectedCard ? (selectedCard.location || '') : '' %>">
+                    <small class="form-hint">
+                      Se mostrará directamente en la tarjeta pública en la etiqueta debajo del nombre del comercio.
+                    </small>
+                  </div>
 
-              <!-- Estado -->
-              <div class="form-group">
-                <label class="form-label" for="status">Estado de la Tarjeta</label>
-                <select name="status" id="status" class="form-input">
-                  <option value="assigned" <%=(!selectedCard || selectedCard.status==='assigned' ) ? 'selected' : '' %>>
-                    Asignada (Activa con Landing Pública)
-                  </option>
-                  <option value="available" <%=(selectedCard && selectedCard.status==='available' ) ? 'selected' : '' %>
-                    >
-                    Disponible (No asignada / En espera)
-                  </option>
-                </select>
-              </div>
+                  <!-- Enlace de Ubicación de Google Maps -->
+                  <div class="form-group">
+                    <label class="form-label" for="googleReviewsUrl">
+                      Enlace de Google Maps <span
+                        style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional - Botón de
+                        Navegación)</span>
+                    </label>
+                    <input type="url" name="googleReviewsUrl" id="googleReviewsUrl" class="form-input"
+                      placeholder="Ej: https://maps.app.goo.gl/... o enlace de Google Maps"
+                      value="<%= selectedCard ? (selectedCard.googleReviewsUrl || '') : '' %>">
+                    <small class="form-hint">
+                      Enlace directo para abrir la app de Google Maps en el botón "Ubicación del Local".
+                    </small>
+                  </div>
 
-              <!-- Botones de Envío -->
-              <div class="btn-group">
-                <button type="submit" class="btn-primary" style="flex: 1;">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                    <polyline points="7 3 7 8 15 8"></polyline>
-                  </svg>
-                  Guardar y Sincronizar
-                </button>
-                <% if (selectedCard) { %>
-                  <a href="/p/<%= selectedCard.cardId %>" target="_blank" class="btn-secondary">
-                    Ver Landing
-                  </a>
-                  <% } %>
-              </div>
+                  <!-- Estado -->
+                  <div class="form-group">
+                    <label class="form-label" for="status">Estado de la Tarjeta</label>
+                    <select name="status" id="status" class="form-input">
+                      <option value="assigned" <%=(!selectedCard || selectedCard.status==='assigned' ) ? 'selected' : ''
+                        %>>
+                        Asignada (Activa con Landing Pública)
+                      </option>
+                      <option value="available" <%=(selectedCard && selectedCard.status==='available' ) ? 'selected'
+                        : '' %>
+                        >
+                        Disponible (No asignada / En espera)
+                      </option>
+                    </select>
+                  </div>
 
-              </form>
+                  <!-- Botones de Envío -->
+                  <div class="btn-group">
+                    <button type="submit" class="btn-primary" style="flex: 1;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                      </svg>
+                      Guardar y Sincronizar
+                    </button>
+                    <% if (selectedCard) { %>
+                      <a href="/p/<%= selectedCard.cardId %>" target="_blank" class="btn-secondary">
+                        Ver Landing
+                      </a>
+                      <% } %>
+                  </div>
+
+                </form>
               </section>
 
             </div>
@@ -637,25 +658,28 @@
   </div>
 
   <script>
-    // Gestión interactiva de Logo / Imagen de Perfil
+    // Conversión de Imagen a Base64 en el cliente (FileReader) y Vista Previa
     function handleLogoFileSelect(input) {
       if (input.files && input.files[0]) {
         const file = input.files[0];
         const reader = new FileReader();
         reader.onload = function (e) {
+          const base64String = e.target.result;
           const img = document.getElementById('logoPreviewImg');
           const fallback = document.getElementById('logoPreviewFallback');
           const removeBtn = document.getElementById('removeLogoBtn');
           const removeHidden = document.getElementById('removeLogo');
+          const logoBase64Input = document.getElementById('logoBase64');
           const urlInput = document.getElementById('logoUrlCustom');
 
           if (img) {
-            img.src = e.target.result;
+            img.src = base64String;
             img.style.display = 'block';
           }
           if (fallback) fallback.style.display = 'none';
           if (removeBtn) removeBtn.style.display = 'inline-flex';
           if (removeHidden) removeHidden.value = 'false';
+          if (logoBase64Input) logoBase64Input.value = base64String;
           if (urlInput) urlInput.value = '';
         };
         reader.readAsDataURL(file);
@@ -668,8 +692,10 @@
       const removeBtn = document.getElementById('removeLogoBtn');
       const removeHidden = document.getElementById('removeLogo');
       const fileInput = document.getElementById('logoFileInput');
+      const logoBase64Input = document.getElementById('logoBase64');
 
       if (fileInput) fileInput.value = '';
+      if (logoBase64Input) logoBase64Input.value = '';
       if (removeHidden) removeHidden.value = 'false';
 
       if (val && val.trim()) {
@@ -695,18 +721,22 @@
       }
     }
 
-    // Botón "Quitar" funcional: Limpia input de archivo, borra previsualización y activa parámetro removeLogo para el backend
+    // Botón "Quitar" funcional: Limpia input de archivo, Base64, borra previsualización y activa parámetro removeLogo para el backend
     function handleRemoveLogo() {
       const img = document.getElementById('logoPreviewImg');
       const fallback = document.getElementById('logoPreviewFallback');
       const removeBtn = document.getElementById('removeLogoBtn');
       const removeHidden = document.getElementById('removeLogo');
       const fileInput = document.getElementById('logoFileInput');
+      const logoBase64Input = document.getElementById('logoBase64');
       const urlInput = document.getElementById('logoUrlCustom');
 
-      // 1. Limpie el input de tipo archivo
+      // 1. Limpie el input de tipo archivo y el string Base64
       if (fileInput) {
         fileInput.value = '';
+      }
+      if (logoBase64Input) {
+        logoBase64Input.value = '';
       }
       if (urlInput) {
         urlInput.value = '';

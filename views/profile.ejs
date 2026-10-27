@@ -18,8 +18,12 @@
           <div class="business-avatar <%= (card.logoUrl && card.logoUrl.trim()) ? 'has-logo' : '' %>" aria-label="Logo del negocio">
 
             
-            <% if (card.logoUrl && card.logoUrl.trim()) { %>
-              <img src="<%= card.logoUrl %>" alt="Logo <%= card.businessName || 'Negocio' %>" class="avatar-logo-img" onerror="this.style.display='none'; document.getElementById('avatar-fallback-text').style.display='flex';">
+            <% if (card.logoUrl && card.logoUrl.trim()) { 
+                const pLogoSrc = (card.logoUrl.startsWith('data:') || card.logoUrl.startsWith('http://') || card.logoUrl.startsWith('https://') || card.logoUrl.startsWith('/'))
+                  ? card.logoUrl.trim()
+                  : ('/' + card.logoUrl.trim());
+            %>
+              <img src="<%= pLogoSrc %>" alt="Logo <%= card.businessName || 'Negocio' %>" class="avatar-logo-img" onerror="this.style.display='none'; document.getElementById('avatar-fallback-text').style.display='flex';">
               <span id="avatar-fallback-text" style="display: none;"><%= (card.businessName && card.businessName.length > 0) ? card.businessName.trim().charAt(0).toUpperCase() : 'N' %></span>
             <% } else { %>
               <%= (card.businessName && card.businessName.length > 0) ? card.businessName.trim().charAt(0).toUpperCase() : 'N' %>
