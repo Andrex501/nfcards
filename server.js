@@ -6,9 +6,48 @@ const Card = require('./models/Card');
 
 const QRCode = require('qrcode');
 const session = require('express-session');
+const multer = require('multer');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Asegurar que la carpeta de subidas de logos exista
+const uploadDir = path.join(__dirname, 'public', 'uploads', 'logos');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Configuración de almacenamiento Multer para Logos de Negocios
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const cardId = (req.params.cardId || 'card').replace(/[^a-zA-Z0-9_-]/g, '');
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname).toLowerCase() || '.png';
+    cb(null, `logo-${cardId}-${uniqueSuffix}${ext}`);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  // Aceptar formatos comunes de imagen
+  const allowed = /jpeg|jpg|png|webp|svg|gif/i;
+  const isMime = allowed.test(file.mimetype);
+  const isExt = allowed.test(path.extname(file.originalname).toLowerCase());
+  if (isMime || isExt) {
+    cb(null, true);
+  } else {
+    cb(new Error('Solo se permiten imágenes (JPG, PNG, WebP, SVG, GIF)'));
+  }
+};
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB máximo
+  fileFilter
+});
 
 const MONGODB_URI = 'mongodb://nithsonbarragan03_db_user:chloe12345@ac-woajqza-shard-00-00.ftjxrxh.mongodb.net:27017,ac-woajqza-shard-00-01.ftjxrxh.mongodb.net:27017,ac-woajqza-shard-00-02.ftjxrxh.mongodb.net:27017/?ssl=true&replicaSet=atlas-m8wmr1-shard-0&authSource=admin';
 
@@ -276,11 +315,32 @@ app.post('/admin/create', async (req, res) => {
 /**
  * POST /admin/update/:cardId
  * Actualiza los datos del negocio y cambia el estado a 'assigned'
+ * Permite subir archivo de logo o vincular una URL
  */
-app.post('/admin/update/:cardId', async (req, res) => {
+app.post('/admin/update/:cardId', (req, res, next) => {
+  upload.single('logoFile')(req, res, (err) => {
+    if (err) {
+      console.error('Error al procesar subida de logo:', err);
+      return res.redirect(`/admin?err=${encodeURIComponent('Error de imagen: ' + err.message)}&edit=${encodeURIComponent(req.params.cardId ? req.params.cardId.trim() : '')}`);
+    }
+    next();
+  });
+}, async (req, res) => {
   try {
     const { cardId } = req.params;
-    const { businessName, instagramUrl, facebookUrl, whatsappNumber, googleReviewsUrl, status } = req.body;
+    const {
+      businessName,
+      location,
+      whatsappNumber,
+      whatsappNumber2,
+      instagramUrl,
+      facebookUrl,
+      tiktokUrl,
+      googleReviewsUrl,
+      logoUrlCustom,
+      removeLogo,
+      status
+    } = req.body;
 
     const newStatus = status || 'assigned';
     const cleanBusinessName = businessName ? businessName.trim() : '';
@@ -290,15 +350,33 @@ app.post('/admin/update/:cardId', async (req, res) => {
       return res.redirect(`/admin?err=${encodeURIComponent('El nombre del negocio es obligatorio para asignar la tarjeta')}&edit=${encodeURIComponent(cardId.trim())}`);
     }
 
+    // Buscar tarjeta actual para mantener el logo si no se sube uno nuevo ni se borra
+    const currentCard = await Card.findOne({ cardId: cardId.trim() });
+    let finalLogoUrl = currentCard ? (currentCard.logoUrl || '') : '';
+
+    if (removeLogo === 'true' || removeLogo === '1') {
+      finalLogoUrl = '';
+    } else if (req.file) {
+      // Se subió un archivo físico nuevo
+      finalLogoUrl = `/uploads/logos/${req.file.filename}`;
+    } else if (typeof logoUrlCustom === 'string' && logoUrlCustom.trim() !== '') {
+      // Se especificó una URL personalizada
+      finalLogoUrl = logoUrlCustom.trim();
+    }
+
     // Buscar y actualizar o crear si no existiese
     const updatedCard = await Card.findOneAndUpdate(
       { cardId: cardId.trim() },
       {
         businessName: cleanBusinessName,
+        location: location ? location.trim() : '',
+        whatsappNumber: whatsappNumber ? whatsappNumber.trim() : '',
+        whatsappNumber2: whatsappNumber2 ? whatsappNumber2.trim() : '',
         instagramUrl: instagramUrl ? instagramUrl.trim() : '',
         facebookUrl: facebookUrl ? facebookUrl.trim() : '',
-        whatsappNumber: whatsappNumber ? whatsappNumber.trim() : '',
+        tiktokUrl: tiktokUrl ? tiktokUrl.trim() : '',
         googleReviewsUrl: googleReviewsUrl ? googleReviewsUrl.trim() : '',
+        logoUrl: finalLogoUrl,
         status: newStatus,
         updatedAt: new Date()
       },
@@ -308,7 +386,7 @@ app.post('/admin/update/:cardId', async (req, res) => {
     res.redirect(`/admin?msg=${encodeURIComponent(`Tarjeta ${cardId} actualizada con éxito`)}&edit=${encodeURIComponent(cardId.trim())}`);
   } catch (error) {
     console.error('Error al actualizar tarjeta:', error);
-    res.redirect(`/admin?err=${encodeURIComponent('Error al guardar datos: ' + error.message)}`);
+    res.redirect(`/admin?err=${encodeURIComponent('Error al guardar datos: ' + error.message)}&edit=${encodeURIComponent(req.params.cardId || '')}`);
   }
 });
 
@@ -323,10 +401,14 @@ app.post('/admin/reset/:cardId', async (req, res) => {
       { cardId: cardId.trim() },
       {
         businessName: '',
+        location: '',
+        whatsappNumber: '',
+        whatsappNumber2: '',
         instagramUrl: '',
         facebookUrl: '',
-        whatsappNumber: '',
+        tiktokUrl: '',
         googleReviewsUrl: '',
+        logoUrl: '',
         status: 'available',
         scanCount: 0,
         updatedAt: new Date()

@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>Panel de Control | Smart Cards NFC & QR</title>
-  <meta name="description" content="Plataforma de gestión de inventario y configuración para tarjetas físicas NFC y códigos QR permanentes.">
+  <title>NithSoft | Panel de Control Inteligente</title>
+  <meta name="description"
+    content="Plataforma de gestión de inventario y configuración para tarjetas físicas NFC y códigos QR permanentes NithSoft.">
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20%220%22%20%22100%22%20%22100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20%220%22%20%22100%22%20%22100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
+
 <body>
   <div class="admin-layout">
-    
-    <!-- Encabezado Principal Señorial -->
+
+    <!-- Encabezado Principal Señorial NithSoft -->
     <header class="admin-header">
       <div class="brand-wrapper">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap;">
@@ -19,9 +23,10 @@
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
             </svg>
-            <span>SaaS Hardware &middot; Colombia</span>
+            <span>NithSoft Hardware &middot; Colombia</span>
           </div>
-          <a href="/logout" class="btn-secondary btn-sm" style="font-size: 0.78rem; gap: 0.4rem;" title="Cerrar sesión administrativa">
+          <a href="/logout" class="btn-secondary btn-sm" style="font-size: 0.78rem; gap: 0.4rem;"
+            title="Cerrar sesión administrativa">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
               <polyline points="16 17 21 12 16 7"></polyline>
@@ -31,10 +36,10 @@
           </a>
         </div>
         <h1 class="brand-title">
-          <span>⚡</span> NFC &amp; QR Card Manager
+          <span>⚡</span> NithSoft
         </h1>
         <p class="brand-subtitle">
-          Administración de tarjetas físicas inteligentes, direccionamiento dinámico y generación de códigos QR de alta resolución.
+          NithSoft — Conectando negocios locales con sus clientes al instante.
         </p>
       </div>
 
@@ -42,24 +47,26 @@
       <div class="metrics-strip">
         <div class="metric-card">
           <div class="metric-label">Total</div>
-          <div class="metric-value"><%= cards.length %></div>
+          <div class="metric-value">
+            <%= cards.length %>
+          </div>
         </div>
         <div class="metric-card assigned">
           <div class="metric-label">Asignadas</div>
           <div class="metric-value">
-            <%= cards.filter(c => c.status === 'assigned').length %>
+            <%= cards.filter(c=> c.status === 'assigned').length %>
           </div>
         </div>
         <div class="metric-card available">
           <div class="metric-label">Disponibles</div>
           <div class="metric-value">
-            <%= cards.filter(c => c.status === 'available').length %>
+            <%= cards.filter(c=> c.status === 'available').length %>
           </div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Total Escaneos</div>
           <div class="metric-value" style="color: #93c5fd;">
-            <%= cards.reduce((acc, c) => acc + (c.scanCount || 0), 0) %>
+            <%= cards.reduce((acc, c)=> acc + (c.scanCount || 0), 0) %>
           </div>
         </div>
       </div>
@@ -72,449 +79,551 @@
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
           <polyline points="22 4 12 14.01 9 11.01"></polyline>
         </svg>
-        <span><%= message %></span>
+        <span>
+          <%= message %>
+        </span>
       </div>
-    <% } %>
+      <% } %>
 
-    <% if (error) { %>
-      <div class="alert alert-error">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="15" y1="9" x2="9" y2="15"></line>
-          <line x1="9" y1="9" x2="15" y2="15"></line>
-        </svg>
-        <span><%= error %></span>
-      </div>
-    <% } %>
-
-    <!-- Grid Principal de Dos Columnas -->
-    <div class="admin-grid">
-      
-      <!-- Columna Izquierda: Inventario de Tarjetas -->
-      <section class="panel-box">
-        <div class="panel-header-row">
-          <h2 class="panel-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-              <line x1="2" y1="10" x2="22" y2="10"></line>
-            </svg>
-            <span>Inventario de Tarjetas</span>
-          </h2>
-          
-          <!-- Formulario rápido para registrar nuevo Card ID -->
-          <form action="/admin/create" method="POST" class="quick-add-form">
-            <input 
-              type="text" 
-              name="cardId" 
-              placeholder="Ej: 004" 
-              required 
-              class="quick-add-input"
-              title="ID numérico o alfanumérico para la tarjeta física"
-            >
-            <button type="submit" class="btn-primary btn-sm" title="Crear nueva tarjeta en blanco">
-              + Agregar
-            </button>
-          </form>
-        </div>
-
-        <% if (cards.length === 0) { %>
-          <div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
-            <p style="font-size: 1rem; margin-bottom: 0.35rem; color: var(--text-primary); font-weight: 600;">
-              No hay tarjetas registradas
-            </p>
-            <p style="font-size: 0.85rem;">
-              Ingresa un ID en el campo superior para comenzar el inventario.
-            </p>
-          </div>
-        <% } else { %>
-          <!-- Buscador en tiempo real por ID de Tarjeta o Nombre de Negocio -->
-          <div class="inventory-search-row">
-            <div class="inventory-search-box">
-              <svg class="inventory-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <input 
-                type="text" 
-                id="cardSearchInput" 
-                class="inventory-search-input" 
-                placeholder="Buscar por ID (ej: 001) o nombre del negocio..." 
-                autocomplete="off"
-                spellcheck="false"
-              >
-              <button 
-                type="button" 
-                id="cardSearchClear" 
-                class="inventory-search-clear" 
-                title="Limpiar búsqueda" 
-                aria-label="Limpiar búsqueda"
-                style="display: none;"
-                onclick="clearCardSearch()"
-              >
-                ✕
-              </button>
-            </div>
-            <div class="inventory-search-counter">
-              <span id="searchCounterText"><%= cards.length %> <%= cards.length === 1 ? 'tarjeta' : 'tarjetas' %></span>
-            </div>
-          </div>
-
-          <div class="cards-table-wrapper">
-            <table class="cards-table">
-              <thead>
-                <tr>
-                  <th style="width: 58px;">QR</th>
-                  <th style="width: 100px;">Card ID</th>
-                  <th>Negocio Asignado</th>
-                  <th style="width: 105px; text-align: center;">Escaneos</th>
-                  <th style="width: 120px;">Estado</th>
-                  <th style="text-align: right; width: 180px;">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% cards.forEach(card => { %>
-                  <tr 
-                    class="card-row <%= (selectedCard && selectedCard.cardId === card.cardId) ? 'is-selected' : '' %>"
-                    data-card-id="<%= card.cardId %>"
-                    data-business="<%= card.businessName || '' %>"
-                  >
-                    
-                    <!-- Miniatura QR interactiva -->
-                    <td class="cell-qr">
-                      <div 
-                        class="qr-thumbnail-box" 
-                        title="Ampliar código QR de la tarjeta <%= card.cardId %>"
-                        data-card-id="<%= card.cardId %>"
-                        data-business="<%= card.businessName || 'Tarjeta Disponible' %>"
-                        data-qr="<%= card.qrDataUrl %>"
-                        data-url="<%= card.publicUrl %>"
-                        onclick="showQrModalFromElement(this)"
-                      >
-                        <img src="<%= card.qrDataUrl %>" alt="QR <%= card.cardId %>" class="qr-thumb-img">
-                      </div>
-                    </td>
-
-                    <!-- ID de la tarjeta física -->
-                    <td class="cell-id">
-                      <span class="card-id-badge">#<%= card.cardId %></span>
-                    </td>
-
-                    <!-- Nombre del Negocio -->
-                    <td class="cell-business">
-                      <% if (card.businessName) { %>
-                        <div class="business-cell-name"><%= card.businessName %></div>
-                        <div class="business-cell-date">
-                          Actualizado: <%= new Date(card.updatedAt).toLocaleDateString('es-CO') %>
-                        </div>
-                      <% } else { %>
-                        <span style="color: var(--text-dim); font-size: 0.88rem; font-style: italic;">
-                          Sin negocio asignado
-                        </span>
-                      <% } %>
-                    </td>
-
-                    <!-- Escaneos / Visitas Totales -->
-                    <td class="cell-scans" style="text-align: center;">
-                      <span class="scans-pill" title="Total de lecturas/escaneos registrados">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                          <circle cx="12" cy="12" r="3"></circle>
-                        </svg>
-                        <span><%= card.scanCount || 0 %></span>
-                      </span>
-                    </td>
-
-                    <!-- Estado -->
-                    <td class="cell-status">
-                      <span class="status-pill <%= card.status %>">
-                        <%= card.status === 'assigned' ? 'Asignada' : 'Disponible' %>
-                      </span>
-                    </td>
-
-                    <!-- Acciones Rápidas -->
-                    <td class="cell-actions" style="text-align: right;">
-                      <div class="cards-table-actions" style="display: inline-flex; gap: 0.35rem; justify-content: flex-end; align-items: center;">
-                        
-                        <!-- Botón Ver/Descargar QR -->
-                        <button 
-                          type="button" 
-                          class="btn-secondary btn-sm" 
-                          title="Ver y descargar código QR"
-                          data-card-id="<%= card.cardId %>"
-                          data-business="<%= card.businessName || 'Tarjeta Disponible' %>"
-                          data-qr="<%= card.qrDataUrl %>"
-                          data-url="<%= card.publicUrl %>"
-                          onclick="showQrModalFromElement(this)"
-                        >
-                          QR
-                        </button>
-
-                        <!-- Botón Editar -->
-                        <a href="/admin?edit=<%= card.cardId %>" class="btn-secondary btn-sm" title="Editar datos del negocio">
-                          Editar
-                        </a>
-
-                        <!-- Botón Probar enlace NFC / QR público -->
-                        <a href="/p/<%= card.cardId %>" target="_blank" class="btn-secondary btn-sm" title="Abrir página pública permanente">
-                          Probar
-                        </a>
-
-                        <!-- Botón Reset si está asignada -->
-                        <% if (card.status === 'assigned') { %>
-                          <form action="/admin/reset/<%= card.cardId %>" method="POST" onsubmit="return confirm('¿Deseas desvincular este negocio y dejar la tarjeta disponible?');" style="display:inline; margin: 0;">
-                            <button type="submit" class="btn-secondary btn-sm btn-danger-sm" title="Restablecer tarjeta a disponible">
-                              ✕
-                            </button>
-                          </form>
-                        <% } %>
-                      </div>
-                    </td>
-
-                  </tr>
-                <% }); %>
-
-                <!-- Fila de estado cuando no hay resultados de búsqueda -->
-                <tr id="noSearchResultsRow" class="no-results-row" style="display: none;">
-                  <td colspan="6">
-                    <div class="no-search-results">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        <line x1="8" y1="11" x2="14" y2="11"></line>
-                      </svg>
-                      <p class="no-search-results-title">No se encontraron tarjetas</p>
-                      <p class="no-search-results-desc">No hay coincidencias para "<strong id="noResultsQuery"></strong>"</p>
-                      <button type="button" class="btn-secondary btn-sm" onclick="clearCardSearch()" style="margin-top: 0.35rem;">
-                        Limpiar búsqueda
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        <% } %>
-      </section>
-
-      <!-- Columna Derecha: Formulario de Asignación / Edición -->
-      <section class="panel-box">
-        <div class="panel-header-row">
-          <h2 class="panel-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        <% if (error) { %>
+          <div class="alert alert-error">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
             </svg>
             <span>
-              <%= selectedCard ? `Configurar Tarjeta #${selectedCard.cardId}` : 'Asignar / Editar Tarjeta' %>
+              <%= error %>
             </span>
-          </h2>
-          <% if (selectedCard) { %>
-            <a href="/admin" class="btn-secondary btn-sm" style="font-size: 0.78rem;">
-              + Nueva Selección
-            </a>
+          </div>
           <% } %>
-        </div>
 
-        <!-- Si hay una tarjeta seleccionada, mostrar panel con su QR generado -->
+            <!-- Grid Principal de Dos Columnas -->
+            <div class="admin-grid">
+
+              <!-- Columna Izquierda: Inventario de Tarjetas -->
+              <section class="panel-box">
+                <div class="panel-header-row">
+                  <h2 class="panel-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                      <line x1="2" y1="10" x2="22" y2="10"></line>
+                    </svg>
+                    <span>Inventario de Tarjetas</span>
+                  </h2>
+
+                  <!-- Formulario rápido para registrar nuevo Card ID -->
+                  <form action="/admin/create" method="POST" class="quick-add-form">
+                    <input type="text" name="cardId" placeholder="Ej: 004" required class="quick-add-input"
+                      title="ID numérico o alfanumérico para la tarjeta física">
+                    <button type="submit" class="btn-primary btn-sm" title="Crear nueva tarjeta en blanco">
+                      + Agregar
+                    </button>
+                  </form>
+                </div>
+
+                <% if (cards.length===0) { %>
+                  <div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+                    <p style="font-size: 1rem; margin-bottom: 0.35rem; color: var(--text-primary); font-weight: 600;">
+                      No hay tarjetas registradas
+                    </p>
+                    <p style="font-size: 0.85rem;">
+                      Ingresa un ID en el campo superior para comenzar el inventario.
+                    </p>
+                  </div>
+                  <% } else { %>
+                    <!-- Buscador en tiempo real por ID de Tarjeta o Nombre de Negocio -->
+                    <div class="inventory-search-row">
+                      <div class="inventory-search-box">
+                        <svg class="inventory-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2">
+                          <circle cx="11" cy="11" r="8"></circle>
+                          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="cardSearchInput" class="inventory-search-input"
+                          placeholder="Buscar por ID (ej: 001) o nombre del negocio..." autocomplete="off"
+                          spellcheck="false">
+                        <button type="button" id="cardSearchClear" class="inventory-search-clear"
+                          title="Limpiar búsqueda" aria-label="Limpiar búsqueda" style="display: none;"
+                          onclick="clearCardSearch()">
+                          ✕
+                        </button>
+                      </div>
+                      <div class="inventory-search-counter">
+                        <span id="searchCounterText">
+                          <%= cards.length %>
+                            <%= cards.length===1 ? 'tarjeta' : 'tarjetas' %>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="cards-table-wrapper">
+                      <table class="cards-table">
+                        <thead>
+                          <tr>
+                            <th style="width: 58px;">QR</th>
+                            <th style="width: 100px;">Card ID</th>
+                            <th>Negocio Asignado</th>
+                            <th style="width: 105px; text-align: center;">Escaneos</th>
+                            <th style="width: 120px;">Estado</th>
+                            <th style="text-align: right; width: 180px;">Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% cards.forEach(card=> { %>
+                            <tr
+                              class="card-row <%= (selectedCard && selectedCard.cardId === card.cardId) ? 'is-selected' : '' %>"
+                              data-card-id="<%= card.cardId %>"
+                              data-business="<%= (card.businessName || '') + ' ' + (card.location || '') %>">
+
+                              <!-- Miniatura QR interactiva -->
+                              <td class="cell-qr">
+                                <div class="qr-thumbnail-box" title="Ampliar código QR de la tarjeta <%= card.cardId %>"
+                                  data-card-id="<%= card.cardId %>"
+                                  data-business="<%= card.businessName || 'Tarjeta Disponible' %>"
+                                  data-qr="<%= card.qrDataUrl %>" data-url="<%= card.publicUrl %>"
+                                  onclick="showQrModalFromElement(this)">
+                                  <img src="<%= card.qrDataUrl %>" alt="QR <%= card.cardId %>" class="qr-thumb-img">
+                                </div>
+                              </td>
+
+                              <!-- ID de la tarjeta física -->
+                              <td class="cell-id">
+                                <span class="card-id-badge">#<%= card.cardId %></span>
+                              </td>
+
+                              <!-- Nombre del Negocio y Ubicación -->
+                              <td class="cell-business">
+                                <% if (card.businessName) { %>
+                                  <div class="table-business-cell">
+                                    <% if (card.logoUrl) { %>
+                                      <div class="table-business-logo" title="Logo de <%= card.businessName %>">
+                                        <img src="<%= card.logoUrl %>" alt="Logo <%= card.businessName %>"
+                                          onerror="this.parentElement.style.display='none';">
+                                      </div>
+                                      <% } %>
+                                        <div>
+                                          <div class="business-cell-name">
+                                            <%= card.businessName %>
+                                          </div>
+                                          <% if (card.location) { %>
+                                            <div class="business-cell-location">
+                                              📍 <%= card.location %>
+                                            </div>
+                                            <% } %>
+                                              <div class="business-cell-date">
+                                                Actualizado: <%= new Date(card.updatedAt).toLocaleDateString('es-CO') %>
+                                              </div>
+                                        </div>
+                                  </div>
+                                  <% } else { %>
+                                    <span style="color: var(--text-dim); font-size: 0.88rem; font-style: italic;">
+                                      Sin negocio asignado
+                                    </span>
+                                    <% } %>
+                              </td>
+
+                              <!-- Escaneos / Visitas Totales -->
+                              <td class="cell-scans" style="text-align: center;">
+                                <span class="scans-pill" title="Total de lecturas/escaneos registrados">
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                  </svg>
+                                  <span>
+                                    <%= card.scanCount || 0 %>
+                                  </span>
+                                </span>
+                              </td>
+
+                              <!-- Estado -->
+                              <td class="cell-status">
+                                <span class="status-pill <%= card.status %>">
+                                  <%= card.status==='assigned' ? 'Asignada' : 'Disponible' %>
+                                </span>
+                              </td>
+
+                              <!-- Acciones Rápidas -->
+                              <td class="cell-actions" style="text-align: right;">
+                                <div class="cards-table-actions"
+                                  style="display: inline-flex; gap: 0.35rem; justify-content: flex-end; align-items: center;">
+
+                                  <!-- Botón Ver/Descargar QR -->
+                                  <button type="button" class="btn-secondary btn-sm" title="Ver y descargar código QR"
+                                    data-card-id="<%= card.cardId %>"
+                                    data-business="<%= card.businessName || 'Tarjeta Disponible' %>"
+                                    data-qr="<%= card.qrDataUrl %>" data-url="<%= card.publicUrl %>"
+                                    onclick="showQrModalFromElement(this)">
+                                    QR
+                                  </button>
+
+                                  <!-- Botón Editar -->
+                                  <a href="/admin?edit=<%= card.cardId %>" class="btn-secondary btn-sm"
+                                    title="Editar datos del negocio">
+                                    Editar
+                                  </a>
+
+                                  <!-- Botón Probar enlace NFC / QR público -->
+                                  <a href="/p/<%= card.cardId %>" target="_blank" class="btn-secondary btn-sm"
+                                    title="Abrir página pública permanente">
+                                    Probar
+                                  </a>
+
+                                  <!-- Botón Reset si está asignada -->
+                                  <% if (card.status==='assigned' ) { %>
+                                    <form action="/admin/reset/<%= card.cardId %>" method="POST"
+                                      onsubmit="return confirm('¿Deseas desvincular este negocio y dejar la tarjeta disponible?');"
+                                      style="display:inline; margin: 0;">
+                                      <button type="submit" class="btn-secondary btn-sm btn-danger-sm"
+                                        title="Restablecer tarjeta a disponible">
+                                        ✕
+                                      </button>
+                                    </form>
+                                    <% } %>
+                                </div>
+                              </td>
+
+                            </tr>
+                            <% }); %>
+
+                              <!-- Fila de estado cuando no hay resultados de búsqueda -->
+                              <tr id="noSearchResultsRow" class="no-results-row" style="display: none;">
+                                <td colspan="6">
+                                  <div class="no-search-results">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                      stroke-width="1.75">
+                                      <circle cx="11" cy="11" r="8"></circle>
+                                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                      <line x1="8" y1="11" x2="14" y2="11"></line>
+                                    </svg>
+                                    <p class="no-search-results-title">No se encontraron tarjetas</p>
+                                    <p class="no-search-results-desc">No hay coincidencias para "<strong
+                                        id="noResultsQuery"></strong>"</p>
+                                    <button type="button" class="btn-secondary btn-sm" onclick="clearCardSearch()"
+                                      style="margin-top: 0.35rem;">
+                                      Limpiar búsqueda
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <% } %>
+              </section>
+
+              <!-- Columna Derecha: Formulario de Asignación / Edición (Scroll Independiente) -->
+              <section class="panel-box panel-form-box">
+                <div class="panel-header-row">
+                  <h2 class="panel-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    <span>
+                      <%= selectedCard ? `Configurar Tarjeta #${selectedCard.cardId}` : 'Asignar / Editar Tarjeta' %>
+                    </span>
+                  </h2>
+                  <% if (selectedCard) { %>
+                    <a href="/admin" class="btn-secondary btn-sm" style="font-size: 0.78rem;">
+                      + Nueva Selección
+                    </a>
+                    <% } %>
+                </div>
+
+            
+
+
+
+
+         <!-- Si hay una tarjeta seleccionada, mostrar panel con su QR generado -->
         <% if (selectedCard) { %>
-          <div class="selected-qr-card">
-            <div 
-              class="selected-qr-img-wrapper" 
-              title="Click para ampliar código QR"
+          <div class="selected-qr-card" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: nowrap; background: var(--bg-deep, #121212); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-color, #27272a); margin-bottom: 1.5rem;">
+            
+            <!-- Contenedor de la Imagen QR -->
+            <div class="selected-qr-img-wrapper" style="flex-shrink: 0; cursor: pointer;" title="Click para ampliar código QR"
               data-card-id="<%= selectedCard.cardId %>"
               data-business="<%= selectedCard.businessName || 'Tarjeta Disponible' %>"
-              data-qr="<%= selectedCard.qrDataUrl %>"
-              data-url="<%= selectedCard.publicUrl %>"
-              onclick="showQrModalFromElement(this)"
-            >
-              <img src="<%= selectedCard.qrDataUrl %>" alt="QR Tarjeta <%= selectedCard.cardId %>">
+              data-qr="<%= selectedCard.qrDataUrl %>" data-url="<%= selectedCard.publicUrl %>"
+              onclick="showQrModalFromElement(this)">
+              <img src="<%= selectedCard.qrDataUrl %>" alt="QR Tarjeta <%= selectedCard.cardId %>" style="width: 75px; height: 75px; object-fit: contain; background: #fff; padding: 3px; border-radius: 6px; display: block;">
             </div>
-            <div class="selected-qr-info">
-              <span class="selected-qr-label">Enlace Permanente NFC / QR</span>
-              <div class="selected-qr-url"><%= selectedCard.publicUrl %></div>
-              <div class="selected-qr-stats">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+            <!-- Información y Botones -->
+            <div class="selected-qr-info" style="flex: 1; min-width: 0;">
+              <span class="selected-qr-label" style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 0.15rem;">Enlace NFC / QR</span>
+              
+              <div class="selected-qr-url" style="font-size: 0.72rem; word-break: break-all; color: #93c5fd; margin-bottom: 0.3rem; line-height: 1.2;">
+                <%= selectedCard.publicUrl %>
+              </div>
+
+              <div class="selected-qr-stats" style="font-size: 0.72rem; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.3rem; color: var(--text-muted);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                   <circle cx="12" cy="12" r="3"></circle>
                 </svg>
-                <span>Escaneos registrados: <strong style="color: var(--text-primary);"><%= selectedCard.scanCount || 0 %></strong></span>
+                <span>Escaneos: <strong style="color: var(--text-primary);"><%= selectedCard.scanCount || 0 %></strong></span>
               </div>
-              <div class="selected-qr-actions">
-                <a href="/admin/qr/<%= selectedCard.cardId %>/download" class="btn-secondary btn-sm" style="color: var(--status-available-text);">
-                  Descargar PNG
+
+              <div class="selected-qr-actions" style="display: flex; gap: 0.35rem;">
+                <a href="/admin/qr/<%= selectedCard.cardId %>/download" class="btn-secondary btn-sm"
+                  style="color: #4ade80; font-size: 0.68rem; padding: 0.2rem 0.4rem;">
+                  PNG
                 </a>
-                <a href="/admin/qr/<%= selectedCard.cardId %>/print" target="_blank" class="btn-secondary btn-sm">
+                <a href="/admin/qr/<%= selectedCard.cardId %>/print" target="_blank"
+                  class="btn-secondary btn-sm" style="font-size: 0.68rem; padding: 0.2rem 0.4rem;">
                   Imprimir
                 </a>
               </div>
             </div>
+
           </div>
         <% } %>
 
-        <form 
-          id="card-form"
-          action="/admin/update/<%= selectedCard ? selectedCard.cardId : '' %>" 
-          method="POST"
-          onsubmit="return validateForm(event)"
-        >
-          <!-- Selector / Input de Card ID -->
-          <div class="form-group">
-            <label class="form-label" for="form-cardId">ID de la Tarjeta Física (cardId)</label>
-            <% if (selectedCard) { %>
-              <input 
-                type="text" 
-                id="form-cardId"
-                class="form-input" 
-                value="<%= selectedCard.cardId %>" 
-                readonly 
-                style="opacity: 0.8; cursor: not-allowed; background: var(--bg-deep);"
-              >
-            <% } else { %>
-              <input 
-                type="text" 
-                id="form-cardId"
-                class="form-input" 
-                placeholder="Ej: 001" 
-                required
-                oninput="updateFormAction(this.value)"
-              >
-              <small class="form-hint">
-                Especifica el identificador grabado físicamente en la tarjeta NFC o etiqueta QR.
-              </small>
-            <% } %>
-          </div>
 
-          <!-- Nombre del Negocio -->
-          <div class="form-group">
-            <label class="form-label" for="businessName">
-              Nombre del Negocio Local <span id="businessNameRequiredMarker" style="color: #fca5a5;">*</span>
-            </label>
-            <input 
-              type="text" 
-              name="businessName" 
-              id="businessName" 
-              class="form-input" 
-              placeholder="Ej: Café Quindío Gourmet" 
-              value="<%= selectedCard ? selectedCard.businessName : '' %>"
-            >
-            <small class="form-hint" id="businessNameHint">
-              Obligatorio para tarjetas con estado "Asignada".
-            </small>
-          </div>
+-
 
-          <!-- Número de WhatsApp -->
-          <div class="form-group">
-            <label class="form-label" for="whatsappNumber">
-              Número de WhatsApp <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
-            </label>
-            <input 
-              type="text" 
-              name="whatsappNumber" 
-              id="whatsappNumber" 
-              class="form-input" 
-              placeholder="Ej: 3001234567 o +57 300 123 4567" 
-              value="<%= selectedCard ? selectedCard.whatsappNumber : '' %>"
-            >
-            <small class="form-hint">
-              Número móvil a 10 dígitos (ej: 310...) o con código internacional (+57).
-            </small>
-          </div>
 
-          <!-- URL de Instagram -->
-          <div class="form-group">
-            <label class="form-label" for="instagramUrl">
-              Perfil o Enlace de Instagram <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
-            </label>
-            <input 
-              type="text" 
-              name="instagramUrl" 
-              id="instagramUrl" 
-              class="form-input" 
-              placeholder="Ej: @cafequindio o https://instagram.com/cafequindio" 
-              value="<%= selectedCard ? selectedCard.instagramUrl : '' %>"
-            >
-          </div>
 
-          <!-- URL de Facebook -->
-          <div class="form-group">
-            <label class="form-label" for="facebookUrl">
-              Enlace de Facebook <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
-            </label>
-            <input 
-              type="text" 
-              name="facebookUrl" 
-              id="facebookUrl" 
-              class="form-input" 
-              placeholder="Ej: https://facebook.com/cafequindio o @cafequindio" 
-              value="<%= selectedCard ? (selectedCard.facebookUrl || '') : '' %>"
-            >
-            <small class="form-hint">
-              Enlace directo al perfil o página oficial de Facebook.
-            </small>
-          </div>
+                    <form id="card-form" action="/admin/update/<%= selectedCard ? selectedCard.cardId : '' %>"
+                      method="POST" enctype="multipart/form-data" onsubmit="return validateForm(event)">
+                      <!-- Selector / Input de Card ID -->
+                      <div class="form-group">
+                        <label class="form-label" for="form-cardId">ID de la Tarjeta Física (cardId)</label>
+                        <% if (selectedCard) { %>
+                          <input type="text" id="form-cardId" class="form-input" value="<%= selectedCard.cardId %>"
+                            readonly style="opacity: 0.8; cursor: not-allowed; background: var(--bg-deep);">
+                          <% } else { %>
+                            <input type="text" id="form-cardId" class="form-input" placeholder="Ej: 001" required
+                              oninput="updateFormAction(this.value)">
+                            <small class="form-hint">
+                              Especifica el identificador grabado físicamente en la tarjeta NFC o etiqueta QR.
+                            </small>
+                            <% } %>
+                      </div>
 
-          <!-- Enlace de Ubicación de Google Maps -->
-          <div class="form-group">
-            <label class="form-label" for="googleReviewsUrl">
-              Enlace de Ubicación (Google Maps) <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
-            </label>
-            <input 
-              type="url" 
-              name="googleReviewsUrl" 
-              id="googleReviewsUrl" 
-              class="form-input" 
-              placeholder="Ej: https://maps.app.goo.gl/... o enlace de Google Maps" 
-              value="<%= selectedCard ? selectedCard.googleReviewsUrl : '' %>"
-            >
-            <small class="form-hint">
-              Ubicación física del local para abrir directamente en Google Maps.
-            </small>
-          </div>
+                      <!-- Logo o Imagen de Perfil del Negocio -->
+                      <div class="form-group">
+                        <label class="form-label">
+                          Logo del Negocio <span
+                            style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional - Imagen
+                            circular)</span>
+                        </label>
+                        <div class="logo-upload-container">
+                          <div class="logo-preview-row">
+                            <div class="logo-preview-avatar" id="logoPreviewContainer" title="Vista previa del logo">
+                              <% if (selectedCard && selectedCard.logoUrl) { %>
+                                <img id="logoPreviewImg" src="<%= selectedCard.logoUrl %>"
+                                  alt="Logo <%= selectedCard.businessName || '' %>">
+                                <span id="logoPreviewFallback" style="display: none;">
+                                  <%= (selectedCard.businessName && selectedCard.businessName.length> 0) ?
+                                    selectedCard.businessName.charAt(0).toUpperCase() : 'N' %>
+                                </span>
+                                <% } else { %>
+                                  <img id="logoPreviewImg" src="" alt="Previsualización" style="display: none;">
+                                  <span id="logoPreviewFallback">
+                                    <%= (selectedCard && selectedCard.businessName && selectedCard.businessName.length>
+                                      0) ? selectedCard.businessName.charAt(0).toUpperCase() : 'N' %>
+                                  </span>
+                                  <% } %>
+                            </div>
+                            <div class="logo-upload-controls">
+                              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                                <label for="logoFileInput" class="file-upload-btn-label">
+                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                  </svg>
+                                  <span>Subir Imagen</span>
+                                </label>
 
-          <!-- Estado -->
-          <div class="form-group">
-            <label class="form-label" for="status">Estado de la Tarjeta</label>
-            <select name="status" id="status" class="form-input">
-              <option value="assigned" <%= (!selectedCard || selectedCard.status === 'assigned') ? 'selected' : '' %>>
-                Asignada (Activa con Landing Pública)
-              </option>
-              <option value="available" <%= (selectedCard && selectedCard.status === 'available') ? 'selected' : '' %>>
-                Disponible (No asignada / En espera)
-              </option>
-            </select>
-          </div>
 
-          <!-- Botones de Envío -->
-          <div class="btn-group">
-            <button type="submit" class="btn-primary" style="flex: 1;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                <polyline points="7 3 7 8 15 8"></polyline>
-              </svg>
-              Guardar y Sincronizar
-            </button>
-            <% if (selectedCard) { %>
-              <a href="/p/<%= selectedCard.cardId %>" target="_blank" class="btn-secondary">
-                Ver Landing
-              </a>
-            <% } %>
-          </div>
 
-        </form>
-      </section>
+                                <input type="file" id="logoFileInput" name="logoFile"
+                                  accept="image/png, image/jpeg, image/webp, image/svg+xml, image/gif"
+                                  style="display: none;" onchange="handleLogoFileSelect(this)">
 
-    </div>
+                                <button type="button" id="removeLogoBtn" class="btn-secondary btn-sm"
+                                  style="<%= (selectedCard && selectedCard.logoUrl) ? '' : 'display: none;' %> font-size: 0.85rem; color: var(--btn-danger-text);"
+                                  onclick="handleRemoveLogo()" title="Eliminar logo actual">
+                                  ✕ Quitar
+                                </button>
+                              </div>
+
+
+                            </div>
+                            <input type="hidden" name="removeLogo" id="removeLogo" value="false">
+                      
+                          </div>
+                        </div>
+
+                        <!-- Campo URL directa opcional -->
+                        <div id="logoUrlWrapper"
+                          style="<%= (selectedCard && selectedCard.logoUrl && !selectedCard.logoUrl.startsWith('/uploads/')) ? '' : 'display: none;' %> margin-top: 0.4rem;">
+                          <input type="url" name="logoUrlCustom" id="logoUrlCustom" class="form-input"
+                            placeholder="https://ejemplo.com/logo.png"
+                            value="<%= (selectedCard && selectedCard.logoUrl && !selectedCard.logoUrl.startsWith('/uploads/')) ? selectedCard.logoUrl : '' %>"
+                            oninput="handleLogoUrlInput(this.value)" style="font-size: 0.82rem; min-height: 38px;">
+                          <small class="form-hint">Enlace https directo a una imagen JPG, PNG, WebP o SVG.</small>
+                        </div>
+                      </div>
+            </div>
+
+            <!-- Nombre del Negocio -->
+            <div class="form-group">
+              <label class="form-label" for="businessName">
+                Nombre del Negocio Local <span id="businessNameRequiredMarker" style="color: #fca5a5;">*</span>
+              </label>
+              <input type="text" name="businessName" id="businessName" class="form-input"
+                placeholder="Ej: Café Quindío Gourmet"
+                value="<%= (selectedCard && selectedCard.businessName) ? selectedCard.businessName : '' %>">
+
+              <!-- Número de WhatsApp Principal -->
+              <div class="form-group">
+                <label class="form-label" for="whatsappNumber">
+                  Número de WhatsApp (Principal) <span
+                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
+                </label>
+                <input type="text" name="whatsappNumber" id="whatsappNumber" class="form-input"
+                  placeholder="Ej: 3001234567 o +57 300 123 4567"
+                  value="<%= selectedCard ? selectedCard.whatsappNumber : '' %>">
+                <small class="form-hint">
+                  Línea principal a 10 dígitos (ej: 310...) o con código internacional (+57).
+                </small>
+              </div>
+
+              <!-- Segundo Número de WhatsApp -->
+              <div class="form-group">
+                <label class="form-label" for="whatsappNumber2">
+                  Segundo Número de WhatsApp <span
+                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
+                </label>
+                <input type="text" name="whatsappNumber2" id="whatsappNumber2" class="form-input"
+                  placeholder="Ej: 3109876543 o +57 310 987 6543"
+                  value="<%= selectedCard ? (selectedCard.whatsappNumber2 || '') : '' %>">
+                <small class="form-hint">
+                  Línea secundaria para pedidos, ventas o soporte directo.
+                </small>
+              </div>
+
+              <!-- URL de Instagram -->
+              <div class="form-group">
+                <label class="form-label" for="instagramUrl">
+                  Perfil o Enlace de Instagram <span
+                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
+                </label>
+                <input type="text" name="instagramUrl" id="instagramUrl" class="form-input"
+                  placeholder="Ej: @cafequindio o https://instagram.com/cafequindio"
+                  value="<%= selectedCard ? selectedCard.instagramUrl : '' %>">
+              </div>
+
+              <!-- URL de Facebook -->
+              <div class="form-group">
+                <label class="form-label" for="facebookUrl">
+                  Enlace de Facebook <span
+                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
+                </label>
+                <input type="text" name="facebookUrl" id="facebookUrl" class="form-input"
+                  placeholder="Ej: https://facebook.com/cafequindio o @cafequindio"
+                  value="<%= selectedCard ? (selectedCard.facebookUrl || '') : '' %>">
+                <small class="form-hint">
+                  Enlace directo al perfil o página oficial de Facebook.
+                </small>
+              </div>
+
+              <!-- URL de TikTok -->
+              <div class="form-group">
+                <label class="form-label" for="tiktokUrl">
+                  Perfil o Enlace de TikTok <span
+                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional)</span>
+                </label>
+                <input type="text" name="tiktokUrl" id="tiktokUrl" class="form-input"
+                  placeholder="Ej: @cafequindio o https://tiktok.com/@cafequindio"
+                  value="<%= selectedCard ? (selectedCard.tiktokUrl || '') : '' %>">
+                <small class="form-hint">
+                  Enlace directo al perfil o videos oficiales de TikTok.
+                </small>
+              </div>
+
+              <!-- Ubicación Personalizada del Local -->
+              <div class="form-group">
+                <label class="form-label" for="location">
+                  Ubicación del Local <span
+                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional - Visible bajo el
+                    nombre)</span>
+                </label>
+                <input type="text" name="location" id="location" class="form-input"
+                  placeholder="Ej: Guapotá, Santander o Calle 10 # 5-20, Bogotá"
+                  value="<%= selectedCard ? (selectedCard.location || '') : '' %>">
+                <small class="form-hint">
+                  Se mostrará directamente en la tarjeta pública en la etiqueta debajo del nombre del comercio.
+                </small>
+              </div>
+
+              <!-- Enlace de Ubicación de Google Maps -->
+              <div class="form-group">
+                <label class="form-label" for="googleReviewsUrl">
+                  Enlace de Google Maps <span
+                    style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Opcional - Botón de
+                    Navegación)</span>
+                </label>
+                <input type="url" name="googleReviewsUrl" id="googleReviewsUrl" class="form-input"
+                  placeholder="Ej: https://maps.app.goo.gl/... o enlace de Google Maps"
+                  value="<%= selectedCard ? (selectedCard.googleReviewsUrl || '') : '' %>">
+                <small class="form-hint">
+                  Enlace directo para abrir la app de Google Maps en el botón "Ubicación del Local".
+                </small>
+              </div>
+
+              <!-- Estado -->
+              <div class="form-group">
+                <label class="form-label" for="status">Estado de la Tarjeta</label>
+                <select name="status" id="status" class="form-input">
+                  <option value="assigned" <%=(!selectedCard || selectedCard.status==='assigned' ) ? 'selected' : '' %>>
+                    Asignada (Activa con Landing Pública)
+                  </option>
+                  <option value="available" <%=(selectedCard && selectedCard.status==='available' ) ? 'selected' : '' %>
+                    >
+                    Disponible (No asignada / En espera)
+                  </option>
+                </select>
+              </div>
+
+              <!-- Botones de Envío -->
+              <div class="btn-group">
+                <button type="submit" class="btn-primary" style="flex: 1;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                  </svg>
+                  Guardar y Sincronizar
+                </button>
+                <% if (selectedCard) { %>
+                  <a href="/p/<%= selectedCard.cardId %>" target="_blank" class="btn-secondary">
+                    Ver Landing
+                  </a>
+                  <% } %>
+              </div>
+
+              </form>
+              </section>
+
+            </div>
   </div>
 
   <!-- MODAL INTERACTIVO PARA VER Y DESCARGAR QR -->
   <div id="qrModal" class="modal-overlay" onclick="closeQrModal(event)">
     <div class="modal-card" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeQrModal()" title="Cerrar modal">&times;</button>
-      
+
       <div style="margin-bottom: 1rem;">
         <span class="card-id-badge" id="modalCardBadge">Tarjeta #001</span>
-        <h3 id="modalBusinessName" style="font-size: 1.25rem; margin-top: 0.5rem; color: var(--text-primary); font-weight: 700;">
+        <h3 id="modalBusinessName"
+          style="font-size: 1.25rem; margin-top: 0.5rem; color: var(--text-primary); font-weight: 700;">
           Negocio
         </h3>
         <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">
@@ -545,6 +654,102 @@
   </div>
 
   <script>
+    // Gestión interactiva de Logo / Imagen de Perfil
+    function handleLogoFileSelect(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = document.getElementById('logoPreviewImg');
+          const fallback = document.getElementById('logoPreviewFallback');
+          const removeBtn = document.getElementById('removeLogoBtn');
+          const removeHidden = document.getElementById('removeLogo');
+
+          if (img) {
+            img.src = e.target.result;
+            img.style.display = 'block';
+          }
+          if (fallback) fallback.style.display = 'none';
+          if (removeBtn) removeBtn.style.display = 'inline-flex';
+          if (removeHidden) removeHidden.value = 'false';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function handleLogoUrlInput(val) {
+      const img = document.getElementById('logoPreviewImg');
+      const fallback = document.getElementById('logoPreviewFallback');
+      const removeBtn = document.getElementById('removeLogoBtn');
+      const removeHidden = document.getElementById('removeLogo');
+      const fileInput = document.getElementById('logoFileInput');
+
+      if (fileInput) fileInput.value = '';
+      if (removeHidden) removeHidden.value = 'false';
+
+      if (val && val.trim()) {
+        if (img) {
+          img.src = val.trim();
+          img.onload = function () {
+            img.style.display = 'block';
+            if (fallback) fallback.style.display = 'none';
+            if (removeBtn) removeBtn.style.display = 'inline-flex';
+          };
+          img.onerror = function () {
+            img.style.display = 'none';
+            if (fallback) fallback.style.display = 'flex';
+          };
+        }
+      } else {
+        if (img) {
+          img.src = '';
+          img.style.display = 'none';
+        }
+        if (fallback) fallback.style.display = 'flex';
+        if (removeBtn) removeBtn.style.display = 'none';
+      }
+    }
+
+    function handleRemoveLogo() {
+      const img = document.getElementById('logoPreviewImg');
+      const fallback = document.getElementById('logoPreviewFallback');
+      const removeBtn = document.getElementById('removeLogoBtn');
+      const removeHidden = document.getElementById('removeLogo');
+      const fileInput = document.getElementById('logoFileInput');
+      const urlInput = document.getElementById('logoUrlCustom');
+
+      if (fileInput) fileInput.value = '';
+      if (urlInput) urlInput.value = '';
+      if (removeHidden) removeHidden.value = 'true';
+      if (img) {
+        img.src = '';
+        img.style.display = 'none';
+      }
+      if (fallback) fallback.style.display = 'flex';
+      if (removeBtn) removeBtn.style.display = 'none';
+    }
+
+    function toggleLogoUrlInput() {
+      const wrapper = document.getElementById('logoUrlWrapper');
+      if (wrapper) {
+        const isHidden = wrapper.style.display === 'none';
+        wrapper.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) {
+          const input = document.getElementById('logoUrlCustom');
+          if (input) input.focus();
+        }
+      }
+    }
+
+    function handleBusinessNameInput(val) {
+      const fallback = document.getElementById('logoPreviewFallback');
+      const img = document.getElementById('logoPreviewImg');
+      if (fallback && (!img || img.style.display === 'none')) {
+        const trimmed = (val || '').trim();
+        fallback.textContent = trimmed ? trimmed.charAt(0).toUpperCase() : 'N';
+      }
+    }
+
     function updateFormAction(cardId) {
       const form = document.getElementById('card-form');
       if (cardId && cardId.trim()) {
@@ -601,10 +806,10 @@
       document.getElementById('modalBusinessName').textContent = businessName || 'Tarjeta Disponible';
       document.getElementById('modalQrImg').src = qrDataUrl;
       document.getElementById('modalPublicUrl').textContent = publicUrl;
-      
+
       document.getElementById('modalDownloadBtn').href = '/admin/qr/' + encodeURIComponent(cardId) + '/download';
       document.getElementById('modalPrintBtn').href = '/admin/qr/' + encodeURIComponent(cardId) + '/print';
-      
+
       document.getElementById('copyUrlBtnText').textContent = '📋 Copiar Link';
       document.getElementById('qrModal').classList.add('active');
     }
@@ -726,4 +931,5 @@
     });
   </script>
 </body>
+
 </html>

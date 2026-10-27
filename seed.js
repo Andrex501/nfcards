@@ -11,7 +11,10 @@ const sampleCards = [
     businessName: 'Café & Bistro Bogotá',
     instagramUrl: 'https://instagram.com/cafebistrobogota',
     facebookUrl: 'https://facebook.com/cafebistrobogota',
+    tiktokUrl: 'https://tiktok.com/@cafebistrobogota',
     whatsappNumber: '3157894512',
+    whatsappNumber2: '3109876543',
+    logoUrl: '',
     googleReviewsUrl: 'https://maps.google.com/?cid=1029384756',
     scanCount: 142,
     updatedAt: new Date()
@@ -22,7 +25,10 @@ const sampleCards = [
     businessName: '',
     instagramUrl: '',
     facebookUrl: '',
+    tiktokUrl: '',
     whatsappNumber: '',
+    whatsappNumber2: '',
+    logoUrl: '',
     googleReviewsUrl: '',
     scanCount: 0,
     updatedAt: new Date()
@@ -33,7 +39,10 @@ const sampleCards = [
     businessName: 'Barbería Capital Medellín',
     instagramUrl: '@barberiacapitalmed',
     facebookUrl: '@barberiacapitalmed',
+    tiktokUrl: '@barberiacapitalmed',
     whatsappNumber: '+57 320 654 3210',
+    whatsappNumber2: '',
+    logoUrl: '',
     googleReviewsUrl: 'https://maps.google.com/?cid=9988776655',
     scanCount: 89,
     updatedAt: new Date()

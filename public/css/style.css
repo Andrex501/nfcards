@@ -94,6 +94,14 @@
   --loc-sub: #93c5fd;
   --loc-icon-bg: #18283e;
 
+  /* TikTok Señorial Grafito / Neón Sutil */
+  --tt-bg: #151518;
+  --tt-hover: #1f1f24;
+  --tt-border: #2e2e36;
+  --tt-text: #ffffff;
+  --tt-sub: #cbd5e1;
+  --tt-icon-bg: #22222a;
+
   /* Google Reviews Azul Noche / Oro Champagne */
   --gr-bg: #101a28;
   --gr-hover: #17253a;
@@ -362,6 +370,43 @@ img, svg {
   .panel-box {
     padding: 1.65rem;
   }
+}
+
+/* Columna Derecha de Administración con Desplazamiento Vertical Independiente */
+.panel-form-box {
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) rgba(0, 0, 0, 0.3);
+}
+
+@media (min-width: 1024px) {
+  .panel-form-box {
+    position: sticky;
+    top: 1.5rem;
+    max-height: calc(100vh - 3rem);
+  }
+}
+
+.panel-form-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.panel-form-box::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-full);
+}
+
+.panel-form-box::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-full);
+  transition: background 0.2s ease;
+}
+
+.panel-form-box::-webkit-scrollbar-thumb:hover {
+  background: var(--border-focus);
 }
 
 .panel-header-row {
@@ -1316,6 +1361,16 @@ img, svg {
   font-weight: 700;
   color: var(--text-primary);
   box-shadow: var(--shadow-subtle);
+  overflow: hidden;
+  position: relative;
+}
+
+.avatar-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-full);
+  display: block;
 }
 
 .nfc-badge {
@@ -1495,6 +1550,148 @@ img, svg {
 
 .btn-facebook .btn-subtitle {
   color: var(--fb-sub);
+}
+
+/* Botón TikTok Señorial */
+.btn-tiktok {
+  background: var(--tt-bg);
+  border-color: var(--tt-border);
+  color: var(--tt-text);
+}
+
+.btn-tiktok:hover {
+  background: var(--tt-hover);
+  border-color: #3f3946;
+}
+
+.btn-tiktok .btn-icon {
+  background: var(--tt-icon-bg);
+  color: var(--tt-sub);
+}
+
+.btn-tiktok .btn-subtitle {
+  color: var(--tt-sub);
+}
+
+/* Subida de Logo y Avatar en Panel Admin */
+.logo-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 1.1rem;
+  transition: border-color 0.2s ease;
+}
+
+.logo-upload-container:hover {
+  border-color: var(--border-strong);
+}
+
+.logo-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo-preview-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #181818;
+  border: 2px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-subtle);
+}
+
+.logo-preview-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.logo-upload-controls {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.file-upload-btn-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: var(--btn-secondary-bg);
+  border: 1px solid var(--btn-secondary-border);
+  color: var(--text-primary);
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.file-upload-btn-label:hover {
+  background: var(--btn-secondary-hover);
+  border-color: var(--border-strong);
+}
+
+.logo-url-toggle {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 0.2rem;
+  width: fit-content;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.logo-url-toggle:hover {
+  color: var(--text-primary);
+}
+
+.table-business-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.table-business-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.table-business-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Botón Ubicación del Local (Google Maps) Señorial */
