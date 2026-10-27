@@ -24,10 +24,34 @@ const cardSchema = new mongoose.Schema({
     default: '',
     required: false
   },
+  instagramTitle: {
+    type: String,
+    trim: true,
+    default: 'Síguenos en Instagram',
+    required: false
+  },
+  instagramSubtitle: {
+    type: String,
+    trim: true,
+    default: 'Novedades, fotos y catálogo',
+    required: false
+  },
   facebookUrl: {
     type: String,
     trim: true,
     default: '',
+    required: false
+  },
+  facebookTitle: {
+    type: String,
+    trim: true,
+    default: 'Síguenos en Facebook',
+    required: false
+  },
+  facebookSubtitle: {
+    type: String,
+    trim: true,
+    default: 'Comunidad, noticias y eventos',
     required: false
   },
   whatsappNumber: {
@@ -36,10 +60,34 @@ const cardSchema = new mongoose.Schema({
     default: '',
     required: false
   },
+  whatsappTitle: {
+    type: String,
+    trim: true,
+    default: 'WhatsApp Principal',
+    required: false
+  },
+  whatsappSubtitle: {
+    type: String,
+    trim: true,
+    default: 'Atención inmediata por chat',
+    required: false
+  },
   whatsappNumber2: {
     type: String,
     trim: true,
     default: '',
+    required: false
+  },
+  whatsapp2Title: {
+    type: String,
+    trim: true,
+    default: 'Segundo WhatsApp',
+    required: false
+  },
+  whatsapp2Subtitle: {
+    type: String,
+    trim: true,
+    default: 'Línea secundaria de atención',
     required: false
   },
   tiktokUrl: {
@@ -48,10 +96,40 @@ const cardSchema = new mongoose.Schema({
     default: '',
     required: false
   },
+  tiktokTitle: {
+    type: String,
+    trim: true,
+    default: 'Síguenos en TikTok',
+    required: false
+  },
+  tiktokSubtitle: {
+    type: String,
+    trim: true,
+    default: 'Videos y contenido exclusivo',
+    required: false
+  },
   logoUrl: {
     type: String,
     trim: true,
     default: '',
+    required: false
+  },
+  websiteUrl: {
+    type: String,
+    trim: true,
+    default: '',
+    required: false
+  },
+  websiteTitle: {
+    type: String,
+    trim: true,
+    default: 'Visita Nuestro Sitio Web',
+    required: false
+  },
+  websiteSubtitle: {
+    type: String,
+    trim: true,
+    default: 'Tienda virtual y catálogo oficial',
     required: false
   },
   location: {
@@ -64,6 +142,18 @@ const cardSchema = new mongoose.Schema({
     type: String,
     trim: true,
     default: '',
+    required: false
+  },
+  googleReviewsTitle: {
+    type: String,
+    trim: true,
+    default: 'Ubicación del Local',
+    required: false
+  },
+  googleReviewsSubtitle: {
+    type: String,
+    trim: true,
+    default: 'Ver en Google Maps • Cómo llegar',
     required: false
   },
   scanCount: {
@@ -143,6 +233,16 @@ cardSchema.virtual('facebookLink').get(function () {
   }
   if (!/^https?:\/\//i.test(url)) {
     return `https://facebook.com/${url}`;
+  }
+  return url;
+});
+
+// Helper virtual para formatear link de Sitio Web
+cardSchema.virtual('websiteLink').get(function () {
+  if (!this.websiteUrl || !this.websiteUrl.trim()) return '';
+  let url = this.websiteUrl.trim();
+  if (!/^https?:\/\//i.test(url)) {
+    return `https://${url}`;
   }
   return url;
 });

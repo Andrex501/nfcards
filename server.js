@@ -303,11 +303,26 @@ app.post('/admin/update/:cardId', async (req, res) => {
       businessName,
       location,
       whatsappNumber,
+      whatsappTitle,
+      whatsappSubtitle,
       whatsappNumber2,
+      whatsapp2Title,
+      whatsapp2Subtitle,
       instagramUrl,
+      instagramTitle,
+      instagramSubtitle,
       facebookUrl,
+      facebookTitle,
+      facebookSubtitle,
       tiktokUrl,
+      tiktokTitle,
+      tiktokSubtitle,
+      websiteUrl,
+      websiteTitle,
+      websiteSubtitle,
       googleReviewsUrl,
+      googleReviewsTitle,
+      googleReviewsSubtitle,
       logoBase64,
       logoUrlCustom,
       removeLogo,
@@ -321,6 +336,28 @@ app.post('/admin/update/:cardId', async (req, res) => {
     if (newStatus === 'assigned' && !cleanBusinessName) {
       return res.redirect(`/admin?err=${encodeURIComponent('El nombre del negocio es obligatorio para asignar la tarjeta')}&edit=${encodeURIComponent(cardId.trim())}`);
     }
+
+    // Asignación de títulos y subtítulos con valores por defecto
+    const finalWhatsappTitle = (whatsappTitle && whatsappTitle.trim()) ? whatsappTitle.trim() : 'WhatsApp Principal';
+    const finalWhatsappSubtitle = (whatsappSubtitle && whatsappSubtitle.trim()) ? whatsappSubtitle.trim() : 'Atención inmediata por chat';
+
+    const finalWhatsapp2Title = (whatsapp2Title && whatsapp2Title.trim()) ? whatsapp2Title.trim() : 'Segundo WhatsApp';
+    const finalWhatsapp2Subtitle = (whatsapp2Subtitle && whatsapp2Subtitle.trim()) ? whatsapp2Subtitle.trim() : 'Línea secundaria de atención';
+
+    const finalInstagramTitle = (instagramTitle && instagramTitle.trim()) ? instagramTitle.trim() : 'Síguenos en Instagram';
+    const finalInstagramSubtitle = (instagramSubtitle && instagramSubtitle.trim()) ? instagramSubtitle.trim() : 'Novedades, fotos y catálogo';
+
+    const finalFacebookTitle = (facebookTitle && facebookTitle.trim()) ? facebookTitle.trim() : 'Síguenos en Facebook';
+    const finalFacebookSubtitle = (facebookSubtitle && facebookSubtitle.trim()) ? facebookSubtitle.trim() : 'Comunidad, noticias y eventos';
+
+    const finalTiktokTitle = (tiktokTitle && tiktokTitle.trim()) ? tiktokTitle.trim() : 'Síguenos en TikTok';
+    const finalTiktokSubtitle = (tiktokSubtitle && tiktokSubtitle.trim()) ? tiktokSubtitle.trim() : 'Videos y contenido exclusivo';
+
+    const finalWebsiteTitle = (websiteTitle && websiteTitle.trim()) ? websiteTitle.trim() : 'Visita Nuestro Sitio Web';
+    const finalWebsiteSubtitle = (websiteSubtitle && websiteSubtitle.trim()) ? websiteSubtitle.trim() : 'Tienda virtual y catálogo oficial';
+
+    const finalGoogleReviewsTitle = (googleReviewsTitle && googleReviewsTitle.trim()) ? googleReviewsTitle.trim() : 'Ubicación del Local';
+    const finalGoogleReviewsSubtitle = (googleReviewsSubtitle && googleReviewsSubtitle.trim()) ? googleReviewsSubtitle.trim() : 'Ver en Google Maps • Cómo llegar';
 
     // Buscar tarjeta actual para mantener el logo si no se sube uno nuevo ni se borra
     const currentCard = await Card.findOne({ cardId: cardId.trim() });
@@ -347,11 +384,26 @@ app.post('/admin/update/:cardId', async (req, res) => {
         businessName: cleanBusinessName,
         location: location ? location.trim() : '',
         whatsappNumber: whatsappNumber ? whatsappNumber.trim() : '',
+        whatsappTitle: finalWhatsappTitle,
+        whatsappSubtitle: finalWhatsappSubtitle,
         whatsappNumber2: whatsappNumber2 ? whatsappNumber2.trim() : '',
+        whatsapp2Title: finalWhatsapp2Title,
+        whatsapp2Subtitle: finalWhatsapp2Subtitle,
         instagramUrl: instagramUrl ? instagramUrl.trim() : '',
+        instagramTitle: finalInstagramTitle,
+        instagramSubtitle: finalInstagramSubtitle,
         facebookUrl: facebookUrl ? facebookUrl.trim() : '',
+        facebookTitle: finalFacebookTitle,
+        facebookSubtitle: finalFacebookSubtitle,
         tiktokUrl: tiktokUrl ? tiktokUrl.trim() : '',
+        tiktokTitle: finalTiktokTitle,
+        tiktokSubtitle: finalTiktokSubtitle,
+        websiteUrl: websiteUrl ? websiteUrl.trim() : '',
+        websiteTitle: finalWebsiteTitle,
+        websiteSubtitle: finalWebsiteSubtitle,
         googleReviewsUrl: googleReviewsUrl ? googleReviewsUrl.trim() : '',
+        googleReviewsTitle: finalGoogleReviewsTitle,
+        googleReviewsSubtitle: finalGoogleReviewsSubtitle,
         logoUrl: finalLogoUrl,
         status: newStatus,
         updatedAt: new Date()
@@ -379,11 +431,26 @@ app.post('/admin/reset/:cardId', async (req, res) => {
         businessName: '',
         location: '',
         whatsappNumber: '',
+        whatsappTitle: 'WhatsApp Principal',
+        whatsappSubtitle: 'Atención inmediata por chat',
         whatsappNumber2: '',
+        whatsapp2Title: 'Segundo WhatsApp',
+        whatsapp2Subtitle: 'Línea secundaria de atención',
         instagramUrl: '',
+        instagramTitle: 'Síguenos en Instagram',
+        instagramSubtitle: 'Novedades, fotos y catálogo',
         facebookUrl: '',
+        facebookTitle: 'Síguenos en Facebook',
+        facebookSubtitle: 'Comunidad, noticias y eventos',
         tiktokUrl: '',
+        tiktokTitle: 'Síguenos en TikTok',
+        tiktokSubtitle: 'Videos y contenido exclusivo',
+        websiteUrl: '',
+        websiteTitle: 'Visita Nuestro Sitio Web',
+        websiteSubtitle: 'Tienda virtual y catálogo oficial',
         googleReviewsUrl: '',
+        googleReviewsTitle: 'Ubicación del Local',
+        googleReviewsSubtitle: 'Ver en Google Maps • Cómo llegar',
         logoUrl: '',
         status: 'available',
         scanCount: 0,

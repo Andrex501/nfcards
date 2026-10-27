@@ -15,6 +15,7 @@ const sampleCards = [
     whatsappNumber: '3157894512',
     whatsappNumber2: '3109876543',
     logoUrl: '',
+    websiteUrl: 'https://cafebistrobogota.com',
     googleReviewsUrl: 'https://maps.google.com/?cid=1029384756',
     scanCount: 142,
     updatedAt: new Date()

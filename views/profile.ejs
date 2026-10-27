@@ -52,8 +52,9 @@
         const hasInstagram = Boolean(card.instagramUrl && card.instagramUrl.trim() !== '' && card.instagramLink);
         const hasFacebook = Boolean(card.facebookUrl && card.facebookUrl.trim() !== '' && card.facebookLink);
         const hasTiktok = Boolean(card.tiktokUrl && card.tiktokUrl.trim() !== '' && card.tiktokLink);
+        const hasWebsite = Boolean(card.websiteUrl && card.websiteUrl.trim() !== '');
         const hasLocation = Boolean(card.googleReviewsUrl && card.googleReviewsUrl.trim() !== '');
-        const hasAnyAction = hasWhatsapp || hasWhatsapp2 || hasInstagram || hasFacebook || hasTiktok || hasLocation;
+        const hasAnyAction = hasWhatsapp || hasWhatsapp2 || hasInstagram || hasFacebook || hasTiktok || hasWebsite || hasLocation;
       %>
 
       <!-- Canales de Contacto Directo (Estrictamente Condicionales) -->
@@ -61,7 +62,10 @@
         <section class="actions-list" aria-label="Canales oficiales de contacto">
           
           <!-- Canal WhatsApp Principal Señorial -->
-          <% if (hasWhatsapp) { %>
+          <% if (hasWhatsapp) { 
+              const waTitle = (card.whatsappTitle && card.whatsappTitle.trim()) ? card.whatsappTitle.trim() : 'WhatsApp Principal';
+              const waSubtitle = (card.whatsappSubtitle && card.whatsappSubtitle.trim()) ? card.whatsappSubtitle.trim() : 'Atención inmediata por chat';
+          %>
             <a href="<%= card.whatsappLink %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-whatsapp" id="btn-whatsapp">
               <div class="btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -69,8 +73,8 @@
                 </svg>
               </div>
               <div class="btn-text-group">
-                <span class="btn-title"><%= hasWhatsapp2 ? 'WhatsApp Principal' : 'Escríbenos a WhatsApp' %></span>
-                <span class="btn-subtitle">Atención inmediata por chat</span>
+                <span class="btn-title"><%= waTitle %></span>
+                <span class="btn-subtitle"><%= waSubtitle %></span>
               </div>
               <div class="btn-arrow">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -82,7 +86,10 @@
           <% } %>
 
           <!-- Canal WhatsApp Secundario Señorial -->
-          <% if (hasWhatsapp2) { %>
+          <% if (hasWhatsapp2) { 
+              const wa2Title = (card.whatsapp2Title && card.whatsapp2Title.trim()) ? card.whatsapp2Title.trim() : 'Segundo WhatsApp';
+              const wa2Subtitle = (card.whatsapp2Subtitle && card.whatsapp2Subtitle.trim()) ? card.whatsapp2Subtitle.trim() : 'Línea secundaria de atención';
+          %>
             <a href="<%= card.whatsappLink2 %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-whatsapp" id="btn-whatsapp-2">
               <div class="btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -90,8 +97,8 @@
                 </svg>
               </div>
               <div class="btn-text-group">
-                <span class="btn-title">Segundo WhatsApp</span>
-                <span class="btn-subtitle">Línea secundaria de atención</span>
+                <span class="btn-title"><%= wa2Title %></span>
+                <span class="btn-subtitle"><%= wa2Subtitle %></span>
               </div>
               <div class="btn-arrow">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -103,7 +110,10 @@
           <% } %>
 
           <!-- Canal Instagram Señorial -->
-          <% if (hasInstagram) { %>
+          <% if (hasInstagram) { 
+              const igTitle = (card.instagramTitle && card.instagramTitle.trim()) ? card.instagramTitle.trim() : 'Síguenos en Instagram';
+              const igSubtitle = (card.instagramSubtitle && card.instagramSubtitle.trim()) ? card.instagramSubtitle.trim() : 'Novedades, fotos y catálogo';
+          %>
             <a href="<%= card.instagramLink %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-instagram" id="btn-instagram">
               <div class="btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -113,8 +123,8 @@
                 </svg>
               </div>
               <div class="btn-text-group">
-                <span class="btn-title">Síguenos en Instagram</span>
-                <span class="btn-subtitle">Novedades, fotos y catálogo</span>
+                <span class="btn-title"><%= igTitle %></span>
+                <span class="btn-subtitle"><%= igSubtitle %></span>
               </div>
               <div class="btn-arrow">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -126,7 +136,10 @@
           <% } %>
 
           <!-- Canal Facebook Señorial -->
-          <% if (hasFacebook) { %>
+          <% if (hasFacebook) { 
+              const fbTitle = (card.facebookTitle && card.facebookTitle.trim()) ? card.facebookTitle.trim() : 'Síguenos en Facebook';
+              const fbSubtitle = (card.facebookSubtitle && card.facebookSubtitle.trim()) ? card.facebookSubtitle.trim() : 'Comunidad, noticias y eventos';
+          %>
             <a href="<%= card.facebookLink %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-facebook" id="btn-facebook">
               <div class="btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -134,8 +147,8 @@
                 </svg>
               </div>
               <div class="btn-text-group">
-                <span class="btn-title">Síguenos en Facebook</span>
-                <span class="btn-subtitle">Comunidad, noticias y eventos</span>
+                <span class="btn-title"><%= fbTitle %></span>
+                <span class="btn-subtitle"><%= fbSubtitle %></span>
               </div>
               <div class="btn-arrow">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -147,7 +160,10 @@
           <% } %>
 
           <!-- Canal TikTok Señorial -->
-          <% if (hasTiktok) { %>
+          <% if (hasTiktok) { 
+              const ttTitle = (card.tiktokTitle && card.tiktokTitle.trim()) ? card.tiktokTitle.trim() : 'Síguenos en TikTok';
+              const ttSubtitle = (card.tiktokSubtitle && card.tiktokSubtitle.trim()) ? card.tiktokSubtitle.trim() : 'Videos y contenido exclusivo';
+          %>
             <a href="<%= card.tiktokLink %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-tiktok" id="btn-tiktok">
               <div class="btn-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -155,8 +171,35 @@
                 </svg>
               </div>
               <div class="btn-text-group">
-                <span class="btn-title">Síguenos en TikTok</span>
-                <span class="btn-subtitle">Videos y contenido exclusivo</span>
+                <span class="btn-title"><%= ttTitle %></span>
+                <span class="btn-subtitle"><%= ttSubtitle %></span>
+              </div>
+              <div class="btn-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </div>
+            </a>
+          <% } %>
+
+          <!-- Canal Sitio Web Oficial Señorial -->
+          <% if (hasWebsite) { 
+              const websiteHref = card.websiteLink || (/^https?:\/\//i.test(card.websiteUrl.trim()) ? card.websiteUrl.trim() : ('https://' + card.websiteUrl.trim()));
+              const customTitle = (card.websiteTitle && card.websiteTitle.trim()) ? card.websiteTitle.trim() : 'Visita Nuestro Sitio Web';
+              const customSubtitle = (card.websiteSubtitle && card.websiteSubtitle.trim()) ? card.websiteSubtitle.trim() : 'Tienda virtual y catálogo oficial';
+          %>
+            <a href="<%= websiteHref %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-website" id="btn-website">
+              <div class="btn-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+              </div>
+              <div class="btn-text-group">
+                <span class="btn-title"><%= customTitle %></span>
+                <span class="btn-subtitle"><%= customSubtitle %></span>
               </div>
               <div class="btn-arrow">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -168,7 +211,10 @@
           <% } %>
 
           <!-- Canal Ubicación del Local (Google Maps) -->
-          <% if (hasLocation) { %>
+          <% if (hasLocation) { 
+              const locTitle = (card.googleReviewsTitle && card.googleReviewsTitle.trim()) ? card.googleReviewsTitle.trim() : 'Ubicación del Local';
+              const locSubtitle = (card.googleReviewsSubtitle && card.googleReviewsSubtitle.trim()) ? card.googleReviewsSubtitle.trim() : 'Ver en Google Maps • Cómo llegar';
+          %>
             <a href="<%= card.googleReviewsUrl %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-location" id="btn-location">
               <div class="btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -177,8 +223,8 @@
                 </svg>
               </div>
               <div class="btn-text-group">
-                <span class="btn-title">Ubicación del Local</span>
-                <span class="btn-subtitle">Ver en Google Maps &bull; Cómo llegar</span>
+                <span class="btn-title"><%= locTitle %></span>
+                <span class="btn-subtitle"><%= locSubtitle %></span>
               </div>
               <div class="btn-arrow">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

@@ -102,6 +102,14 @@
   --tt-sub: #cbd5e1;
   --tt-icon-bg: #22222a;
 
+  /* Sitio Web Señorial Turquesa / Esmeralda Profundo */
+  --web-bg: #0d1e24;
+  --web-hover: #132b34;
+  --web-border: #163642;
+  --web-text: #f0fdfa;
+  --web-sub: #5eead4;
+  --web-icon-bg: #163845;
+
   /* Google Reviews Azul Noche / Oro Champagne */
   --gr-bg: #101a28;
   --gr-hover: #17253a;
@@ -137,6 +145,10 @@ html {
   font-size: 16px;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 body {
@@ -148,6 +160,8 @@ body {
   letter-spacing: -0.01em;
   overflow-x: hidden;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image: 
@@ -177,14 +191,22 @@ img, svg {
 
 .admin-layout {
   width: 100%;
-  max-width: 1240px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 1.5rem 1rem 3rem;
+  padding: 1.5rem 1.25rem 3rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 @media (min-width: 768px) {
   .admin-layout {
     padding: 2.5rem 2rem 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .admin-layout {
+    padding: 2.5rem 2.5rem 4rem;
   }
 }
 
@@ -1571,6 +1593,27 @@ img, svg {
 
 .btn-tiktok .btn-subtitle {
   color: var(--tt-sub);
+}
+
+/* Botón Sitio Web Señorial */
+.btn-website {
+  background: var(--web-bg);
+  border-color: var(--web-border);
+  color: var(--web-text);
+}
+
+.btn-website:hover {
+  background: var(--web-hover);
+  border-color: #215163;
+}
+
+.btn-website .btn-icon {
+  background: var(--web-icon-bg);
+  color: var(--web-sub);
+}
+
+.btn-website .btn-subtitle {
+  color: var(--web-sub);
 }
 
 /* Subida de Logo y Avatar en Panel Admin */
