@@ -45,6 +45,30 @@
         </div>
       </header>
 
+      <!-- Botón Principal Destacado: Guardar en Contactos (vCard .vcf) - Solo visible si contactPhone está configurado -->
+      <% if (card.contactPhone && card.contactPhone.trim() !== '') { %>
+      <div class="save-contact-container">
+        <a href="/p/<%= card.cardId %>/save-contact" class="btn-save-contact" id="btn-save-contact" download title="Guardar este negocio en la agenda de tu teléfono">
+          <div class="btn-save-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+          </div>
+          <span class="btn-save-text">Guardar en Contactos</span>
+          <div class="btn-save-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </div>
+        </a>
+      </div>
+      <% } %>
+
       <% 
         // Verificaciones estrictas de existencia de canales (no nulos ni vacíos)
         const hasWhatsapp = Boolean(card.whatsappNumber && card.whatsappNumber.trim() !== '' && card.whatsappLink);
@@ -263,12 +287,18 @@
           <span>Escaneos totales: <strong class="scan-count-number"><%= card.scanCount || 0 %></strong></span>
         </div>
 
-    <div class="nfc-tag-indicator">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-  </svg>
-  <span>Powered by <strong>NithSoft</strong> &bull; Standee #<%= card.cardId %></span>
-</div>
+        <!-- Footer Comercial Interactivo ("Powered by NithSoft") -->
+        <% 
+          const commercialMsg = encodeURIComponent("Hola Nithson, vi una tarjeta inteligente de NithSoft en un local y quiero una para mi negocio");
+          const commercialPhone = "573209025487";
+          const commercialWaUrl = `https://wa.me/${commercialPhone}?text=${commercialMsg}`;
+        %>
+        <a href="<%= commercialWaUrl %>" target="_blank" rel="noopener noreferrer" class="nfc-tag-indicator powered-by-link" title="Solicita una Tarjeta Inteligente para tu negocio">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+          <span>Powered by <strong>NithSoft</strong> &bull; Standee #<%= card.cardId %></span>
+        </a>
 
         
       </footer>

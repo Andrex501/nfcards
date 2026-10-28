@@ -308,6 +308,7 @@ app.post('/admin/update/:cardId', async (req, res) => {
       whatsappNumber2,
       whatsapp2Title,
       whatsapp2Subtitle,
+      contactPhone,
       instagramUrl,
       instagramTitle,
       instagramSubtitle,
@@ -359,6 +360,9 @@ app.post('/admin/update/:cardId', async (req, res) => {
     const finalGoogleReviewsTitle = (googleReviewsTitle && googleReviewsTitle.trim()) ? googleReviewsTitle.trim() : 'Ubicación del Local';
     const finalGoogleReviewsSubtitle = (googleReviewsSubtitle && googleReviewsSubtitle.trim()) ? googleReviewsSubtitle.trim() : 'Ver en Google Maps • Cómo llegar';
 
+    // Teléfono para vCard: únicamente el valor explícitamente ingresado por el usuario
+    const finalContactPhone = (contactPhone && contactPhone.trim()) ? contactPhone.trim() : '';
+
     // Buscar tarjeta actual para mantener el logo si no se sube uno nuevo ni se borra
     const currentCard = await Card.findOne({ cardId: cardId.trim() });
     let finalLogoUrl = currentCard ? (currentCard.logoUrl || '') : '';
@@ -389,6 +393,7 @@ app.post('/admin/update/:cardId', async (req, res) => {
         whatsappNumber2: whatsappNumber2 ? whatsappNumber2.trim() : '',
         whatsapp2Title: finalWhatsapp2Title,
         whatsapp2Subtitle: finalWhatsapp2Subtitle,
+        contactPhone: finalContactPhone,
         instagramUrl: instagramUrl ? instagramUrl.trim() : '',
         instagramTitle: finalInstagramTitle,
         instagramSubtitle: finalInstagramSubtitle,
@@ -436,6 +441,7 @@ app.post('/admin/reset/:cardId', async (req, res) => {
         whatsappNumber2: '',
         whatsapp2Title: 'Segundo WhatsApp',
         whatsapp2Subtitle: 'Línea secundaria de atención',
+        contactPhone: '',
         instagramUrl: '',
         instagramTitle: 'Síguenos en Instagram',
         instagramSubtitle: 'Novedades, fotos y catálogo',
@@ -461,6 +467,70 @@ app.post('/admin/reset/:cardId', async (req, res) => {
   } catch (error) {
     console.error('Error al restablecer tarjeta:', error);
     res.redirect(`/admin?err=${encodeURIComponent('Error al restablecer tarjeta')}`);
+  }
+});
+
+/**
+ * GET /p/:cardId/save-contact
+ * Genera y descarga dinámicamente un archivo de contacto estándar vCard (.vcf)
+ * Compatible con iOS (iPhone Contactos) y Android (Google Contactos)
+ */
+app.get('/p/:cardId/save-contact', async (req, res) => {
+  try {
+    const { cardId } = req.params;
+    const cleanId = cardId.trim();
+
+    const card = await Card.findOne({ cardId: cleanId });
+
+    if (!card || card.status !== 'assigned') {
+      return res.redirect(`/p/${encodeURIComponent(cleanId)}`);
+    }
+
+    const businessName = (card.businessName || 'Contacto Comercial').trim();
+    // Uso 100% exclusivo del campo contactPhone; sin fallbacks ni inclusión de otros números
+    const cleanContactPhone = (card.contactPhone || '').replace(/[^\d+]/g, '');
+    const location = (card.location || '').trim();
+    const website = (card.websiteUrl || '').trim();
+
+    // Construcción estricta de vCard versión 3.0 con soporte UTF-8
+    const vcardLines = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      `FN;CHARSET=UTF-8:${businessName}`,
+      `ORG;CHARSET=UTF-8:${businessName}`
+    ];
+
+    // Solo se incluye la etiqueta TEL si el usuario ingresó un valor en contactPhone
+    if (cleanContactPhone) {
+      vcardLines.push(`TEL;TYPE=CELL,VOICE:${cleanContactPhone}`);
+    }
+
+    if (location) {
+      const safeLoc = location.replace(/;/g, '\\;').replace(/,/g, '\\,');
+      vcardLines.push(`ADR;TYPE=WORK;CHARSET=UTF-8:;;${safeLoc};;;;`);
+    }
+
+    if (website) {
+      vcardLines.push(`URL:${website}`);
+    }
+
+    vcardLines.push(`NOTE;CHARSET=UTF-8:Contacto verificado de Tarjeta Inteligente NithSoft #${cleanId}`);
+    vcardLines.push('END:VCARD');
+
+    const vcfContent = vcardLines.join('\r\n') + '\r\n';
+
+    // Nombre de archivo seguro para descargar
+    const cleanFileName = businessName
+      .replace(/[^a-zA-Z0-9_\-\s]/g, '')
+      .trim()
+      .replace(/\s+/g, '_') || `contacto_${cleanId}`;
+
+    res.setHeader('Content-Type', 'text/vcard; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${cleanFileName}.vcf"`);
+    res.send(vcfContent);
+  } catch (error) {
+    console.error('Error al generar vCard (.vcf):', error);
+    res.status(500).send('Error al generar archivo de contacto.');
   }
 });
 

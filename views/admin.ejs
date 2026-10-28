@@ -12,7 +12,8 @@
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20%220%22%20%22100%22%20%22100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   <style>
     /* Eliminación estricta de desbordamiento horizontal y contención total */
-    html, body {
+    html,
+    body {
       overflow-x: hidden !important;
       max-width: 100% !important;
       width: 100% !important;
@@ -241,14 +242,58 @@
       font-size: 0.85rem;
     }
 
-    .form-module-icon.icon-general { background: rgba(255, 255, 255, 0.08); color: #f3f4f6; }
-    .form-module-icon.icon-whatsapp { background: #0d2a1c; color: #86efac; border: 1px solid #1a4230; }
-    .form-module-icon.icon-instagram { background: #27162b; color: #f472b6; border: 1px solid #4a1d4b; }
-    .form-module-icon.icon-facebook { background: #0e2038; color: #93c5fd; border: 1px solid #1e3a64; }
-    .form-module-icon.icon-tiktok { background: #1c1c22; color: #f1f5f9; border: 1px solid #33333e; }
-    .form-module-icon.icon-website { background: #0c272e; color: #5eead4; border: 1px solid #164e5c; }
-    .form-module-icon.icon-location { background: #182234; color: #93c5fd; border: 1px solid #233857; }
-    .form-module-icon.icon-status { background: rgba(255, 255, 255, 0.06); color: #e2e8f0; border: 1px solid rgba(255, 255, 255, 0.1); }
+    .form-module-icon.icon-general {
+      background: rgba(255, 255, 255, 0.08);
+      color: #f3f4f6;
+    }
+
+    .form-module-icon.icon-whatsapp {
+      background: #0d2a1c;
+      color: #86efac;
+      border: 1px solid #1a4230;
+    }
+
+    .form-module-icon.icon-instagram {
+      background: #27162b;
+      color: #f472b6;
+      border: 1px solid #4a1d4b;
+    }
+
+    .form-module-icon.icon-facebook {
+      background: #0e2038;
+      color: #93c5fd;
+      border: 1px solid #1e3a64;
+    }
+
+    .form-module-icon.icon-tiktok {
+      background: #1c1c22;
+      color: #f1f5f9;
+      border: 1px solid #33333e;
+    }
+
+    .form-module-icon.icon-website {
+      background: #0c272e;
+      color: #5eead4;
+      border: 1px solid #164e5c;
+    }
+
+    .form-module-icon.icon-location {
+      background: #182234;
+      color: #93c5fd;
+      border: 1px solid #233857;
+    }
+
+    .form-module-icon.icon-vcard {
+      background: #0f2338;
+      color: #93c5fd;
+      border: 1px solid #1e3a64;
+    }
+
+    .form-module-icon.icon-status {
+      background: rgba(255, 255, 255, 0.06);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
     .form-module-title {
       font-size: 0.86rem;
@@ -593,36 +638,36 @@
                               <td class="cell-business">
                                 <% if (card.businessName) { %>
                                   <div class="table-business-cell">
-                                    <% if (card.logoUrl) { 
-                                        const logoSrc = (card.logoUrl.startsWith('data:') || card.logoUrl.startsWith('http://') || card.logoUrl.startsWith('https://') || card.logoUrl.startsWith('/'))
-                                          ? card.logoUrl 
-                                          : ('/' + card.logoUrl);
-                                    %>
+                                    <% if (card.logoUrl) { const logoSrc=(card.logoUrl.startsWith('data:') ||
+                                      card.logoUrl.startsWith('http://') || card.logoUrl.startsWith('https://') ||
+                                      card.logoUrl.startsWith('/')) ? card.logoUrl : ('/' + card.logoUrl); %>
                                       <div class="table-business-logo" title="Logo de <%= card.businessName %>">
                                         <img src="<%= logoSrc %>" alt="Logo <%= card.businessName %>"
                                           onerror="this.parentElement.style.display='none';">
                                       </div>
-                                    <% } %>
-                                    <div class="business-cell-details">
-                                      <div class="business-cell-name">
-                                        <%= card.businessName %>
-                                      </div>
-                                      <% if (card.location) { %>
-                                        <div class="business-cell-location" title="<%= card.location %>">
-                                          <span class="location-pin">📍</span>
-                                          <span class="location-text"><%= card.location %></span>
-                                        </div>
                                       <% } %>
-                                      <div class="business-cell-date">
-                                        Actualizado: <%= new Date(card.updatedAt).toLocaleDateString('es-CO') %>
-                                      </div>
-                                    </div>
+                                        <div class="business-cell-details">
+                                          <div class="business-cell-name">
+                                            <%= card.businessName %>
+                                          </div>
+                                          <% if (card.location) { %>
+                                            <div class="business-cell-location" title="<%= card.location %>">
+                                              <span class="location-pin">📍</span>
+                                              <span class="location-text">
+                                                <%= card.location %>
+                                              </span>
+                                            </div>
+                                            <% } %>
+                                              <div class="business-cell-date">
+                                                Actualizado: <%= new Date(card.updatedAt).toLocaleDateString('es-CO') %>
+                                              </div>
+                                        </div>
                                   </div>
-                                <% } else { %>
-                                  <span style="color: var(--text-dim); font-size: 0.88rem; font-style: italic;">
-                                    Sin negocio asignado
-                                  </span>
-                                <% } %>
+                                  <% } else { %>
+                                    <span style="color: var(--text-dim); font-size: 0.88rem; font-style: italic;">
+                                      Sin negocio asignado
+                                    </span>
+                                    <% } %>
                               </td>
 
                               <!-- Escaneos / Visitas Totales -->
@@ -743,7 +788,8 @@
                     <div class="form-module-header">
                       <div class="form-module-title-group">
                         <div class="form-module-icon icon-general">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <rect x="2" y="3" width="20" height="14" rx="2"></rect>
                             <line x1="8" y1="21" x2="16" y2="21"></line>
                             <line x1="12" y1="17" x2="12" y2="21"></line>
@@ -758,8 +804,8 @@
                     <div class="form-group" style="margin-bottom: 0.9rem;">
                       <label class="form-label" for="form-cardId">ID de la Tarjeta Física (cardId)</label>
                       <% if (selectedCard) { %>
-                        <input type="text" id="form-cardId" class="form-input" value="<%= selectedCard.cardId %>" readonly
-                          style="opacity: 0.8; cursor: not-allowed; background: var(--bg-deep);">
+                        <input type="text" id="form-cardId" class="form-input" value="<%= selectedCard.cardId %>"
+                          readonly style="opacity: 0.8; cursor: not-allowed; background: var(--bg-deep);">
                         <% } else { %>
                           <input type="text" id="form-cardId" class="form-input" placeholder="Ej: 001" required
                             oninput="updateFormAction(this.value)">
@@ -782,7 +828,9 @@
                     <!-- Ubicación Personalizada del Local (Bajo el nombre) -->
                     <div class="form-group" style="margin-bottom: 0.9rem;">
                       <label class="form-label" for="location">
-                        Ubicación Texto <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Bajo el nombre)</span>
+                        Ubicación Texto <span
+                          style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Bajo el
+                          nombre)</span>
                       </label>
                       <input type="text" name="location" id="location" class="form-input"
                         placeholder="Ej: Guapotá, Santander o Calle 10 # 5-20"
@@ -795,35 +843,33 @@
                     <!-- Logo o Imagen de Perfil del Negocio -->
                     <div class="form-group" style="margin-bottom: 0;">
                       <label class="form-label">
-                        Logo del Negocio <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Circular)</span>
+                        Logo del Negocio <span
+                          style="font-size: 0.74rem; color: var(--text-muted); font-weight: 400;">(Circular)</span>
                       </label>
                       <div class="logo-upload-container">
                         <div class="logo-preview-row">
                           <div class="logo-preview-avatar" id="logoPreviewContainer" title="Vista previa del logo"
                             style="width: 60px; height: 60px; min-width: 60px; min-height: 60px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            <% 
-                              const previewLogoSrc = (selectedCard && selectedCard.logoUrl)
-                                ? ((selectedCard.logoUrl.startsWith('data:') || selectedCard.logoUrl.startsWith('http://') || selectedCard.logoUrl.startsWith('https://') || selectedCard.logoUrl.startsWith('/'))
-                                    ? selectedCard.logoUrl
-                                    : ('/' + selectedCard.logoUrl))
-                                : '';
-                            %>
-                            <% if (selectedCard && selectedCard.logoUrl) { %>
-                              <img id="logoPreviewImg" src="<%= previewLogoSrc %>"
-                                alt="Logo <%= selectedCard.businessName || '' %>"
-                                style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: block;">
-                              <span id="logoPreviewFallback" style="display: none;">
-                                <%= (selectedCard.businessName && selectedCard.businessName.length> 0) ?
-                                  selectedCard.businessName.charAt(0).toUpperCase() : 'N' %>
-                              </span>
-                              <% } else { %>
-                                <img id="logoPreviewImg" src="" alt="Previsualización"
-                                  style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: none;">
-                                <span id="logoPreviewFallback">
-                                  <%= (selectedCard && selectedCard.businessName && selectedCard.businessName.length>
-                                    0) ? selectedCard.businessName.charAt(0).toUpperCase() : 'N' %>
+                            <% const previewLogoSrc=(selectedCard && selectedCard.logoUrl) ?
+                              ((selectedCard.logoUrl.startsWith('data:') || selectedCard.logoUrl.startsWith('http://')
+                              || selectedCard.logoUrl.startsWith('https://') || selectedCard.logoUrl.startsWith('/')) ?
+                              selectedCard.logoUrl : ('/' + selectedCard.logoUrl)) : '' ; %>
+                              <% if (selectedCard && selectedCard.logoUrl) { %>
+                                <img id="logoPreviewImg" src="<%= previewLogoSrc %>"
+                                  alt="Logo <%= selectedCard.businessName || '' %>"
+                                  style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: block;">
+                                <span id="logoPreviewFallback" style="display: none;">
+                                  <%= (selectedCard.businessName && selectedCard.businessName.length> 0) ?
+                                    selectedCard.businessName.charAt(0).toUpperCase() : 'N' %>
                                 </span>
-                                <% } %>
+                                <% } else { %>
+                                  <img id="logoPreviewImg" src="" alt="Previsualización"
+                                    style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; display: none;">
+                                  <span id="logoPreviewFallback">
+                                    <%= (selectedCard && selectedCard.businessName && selectedCard.businessName.length>
+                                      0) ? selectedCard.businessName.charAt(0).toUpperCase() : 'N' %>
+                                  </span>
+                                  <% } %>
                           </div>
                           <div class="logo-upload-controls">
                             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
@@ -855,17 +901,16 @@
                       </div>
 
                       <!-- Campo URL directa opcional -->
-                      <% 
-                        const isCustomExternalLogo = Boolean(selectedCard && selectedCard.logoUrl && !selectedCard.logoUrl.startsWith('data:') && !selectedCard.logoUrl.includes('uploads/'));
-                      %>
-                      <div id="logoUrlWrapper"
-                        style="<%= isCustomExternalLogo ? '' : 'display: none;' %> margin-top: 0.4rem;">
-                        <input type="url" name="logoUrlCustom" id="logoUrlCustom" class="form-input"
-                          placeholder="https://ejemplo.com/logo.png"
-                          value="<%= isCustomExternalLogo ? selectedCard.logoUrl : '' %>"
-                          oninput="handleLogoUrlInput(this.value)" style="font-size: 0.82rem; min-height: 38px;">
-                        <small class="form-hint">Enlace https directo a una imagen JPG, PNG, WebP o SVG.</small>
-                      </div>
+                      <% const isCustomExternalLogo=Boolean(selectedCard && selectedCard.logoUrl &&
+                        !selectedCard.logoUrl.startsWith('data:') && !selectedCard.logoUrl.includes('uploads/')); %>
+                        <div id="logoUrlWrapper"
+                          style="<%= isCustomExternalLogo ? '' : 'display: none;' %> margin-top: 0.4rem;">
+                          <input type="url" name="logoUrlCustom" id="logoUrlCustom" class="form-input"
+                            placeholder="https://ejemplo.com/logo.png"
+                            value="<%= isCustomExternalLogo ? selectedCard.logoUrl : '' %>"
+                            oninput="handleLogoUrlInput(this.value)" style="font-size: 0.82rem; min-height: 38px;">
+                          <small class="form-hint">Enlace https directo a una imagen JPG, PNG, WebP o SVG.</small>
+                        </div>
                     </div>
                   </div>
 
@@ -876,8 +921,10 @@
                     <div class="form-module-header">
                       <div class="form-module-title-group">
                         <div class="form-module-icon icon-whatsapp">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path
+                              d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                           </svg>
                         </div>
                         <h3 class="form-module-title">WhatsApp Principal</h3>
@@ -896,7 +943,8 @@
                     <!-- Personalización de Título y Subtítulo -->
                     <div class="form-custom-texts-box">
                       <div class="form-custom-texts-header">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
                           <path d="M12 20h9"></path>
                           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                         </svg>
@@ -924,8 +972,10 @@
                     <div class="form-module-header">
                       <div class="form-module-title-group">
                         <div class="form-module-icon icon-whatsapp">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path
+                              d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                           </svg>
                         </div>
                         <h3 class="form-module-title">Segundo WhatsApp</h3>
@@ -944,7 +994,8 @@
                     <!-- Personalización de Título y Subtítulo -->
                     <div class="form-custom-texts-box">
                       <div class="form-custom-texts-header">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
                           <path d="M12 20h9"></path>
                           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                         </svg>
@@ -966,13 +1017,45 @@
                   </div>
 
                   <!-- ==============================================
+                       BLOQUE: GUARDAR EN CONTACTOS (vCard / .vcf)
+                       ============================================== -->
+                  <div class="form-module-card">
+                    <div class="form-module-header">
+                      <div class="form-module-title-group">
+                        <div class="form-module-icon icon-vcard">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                          </svg>
+                        </div>
+                        <h3 class="form-module-title">Guardar en Contactos (.vcf)</h3>
+                      </div>
+                      <span class="form-module-badge" style="color: #93c5fd; background: rgba(59, 130, 246, 0.15);">vCard</span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                      <label class="form-label" for="contactPhone">Teléfono para Guardar en Contactos</label>
+                      <input type="text" name="contactPhone" id="contactPhone" class="form-input"
+                        placeholder="Ej: 3001234567 o +57 300 123 4567 (Opcional)"
+                        value="<%= selectedCard ? (selectedCard.contactPhone || '') : '' %>">
+                      <small class="form-hint">
+                        Número exclusivo para la tarjeta de contacto .vcf descargable. Si se deja vacío, no se incluirá teléfono en el archivo ni se mostrará el botón en el perfil público.
+                      </small>
+                    </div>
+                  </div>
+
+                  <!-- ==============================================
                        BLOQUE 4: INSTAGRAM
                        ============================================== -->
                   <div class="form-module-card">
                     <div class="form-module-header">
                       <div class="form-module-title-group">
                         <div class="form-module-icon icon-instagram">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
@@ -994,7 +1077,8 @@
                     <!-- Personalización de Título y Subtítulo -->
                     <div class="form-custom-texts-box">
                       <div class="form-custom-texts-header">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
                           <path d="M12 20h9"></path>
                           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                         </svg>
@@ -1022,7 +1106,8 @@
                     <div class="form-module-header">
                       <div class="form-module-title-group">
                         <div class="form-module-icon icon-facebook">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
                           </svg>
                         </div>
@@ -1042,7 +1127,8 @@
                     <!-- Personalización de Título y Subtítulo -->
                     <div class="form-custom-texts-box">
                       <div class="form-custom-texts-header">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
                           <path d="M12 20h9"></path>
                           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                         </svg>
@@ -1071,7 +1157,8 @@
                       <div class="form-module-title-group">
                         <div class="form-module-icon icon-tiktok">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.68 6.34 6.34 0 0 0 9.35 22a6.34 6.34 0 0 0 6.33-6.32V8.75a8.28 8.28 0 0 0 4.84 1.56V6.85a4.78 4.78 0 0 1-.93-.16z"/>
+                            <path
+                              d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.68 6.34 6.34 0 0 0 9.35 22a6.34 6.34 0 0 0 6.33-6.32V8.75a8.28 8.28 0 0 0 4.84 1.56V6.85a4.78 4.78 0 0 1-.93-.16z" />
                           </svg>
                         </div>
                         <h3 class="form-module-title">TikTok</h3>
@@ -1090,7 +1177,8 @@
                     <!-- Personalización de Título y Subtítulo -->
                     <div class="form-custom-texts-box">
                       <div class="form-custom-texts-header">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
                           <path d="M12 20h9"></path>
                           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                         </svg>
@@ -1118,10 +1206,13 @@
                     <div class="form-module-header">
                       <div class="form-module-title-group">
                         <div class="form-module-icon icon-website">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
                             <line x1="2" y1="12" x2="22" y2="12"></line>
-                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            <path
+                              d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                            </path>
                           </svg>
                         </div>
                         <h3 class="form-module-title">Sitio Web Oficial</h3>
@@ -1140,7 +1231,8 @@
                     <!-- Personalización de Título y Subtítulo -->
                     <div class="form-custom-texts-box">
                       <div class="form-custom-texts-header">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
                           <path d="M12 20h9"></path>
                           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                         </svg>
@@ -1168,7 +1260,8 @@
                     <div class="form-module-header">
                       <div class="form-module-title-group">
                         <div class="form-module-icon icon-location">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                             <circle cx="12" cy="10" r="3"></circle>
                           </svg>
@@ -1189,7 +1282,8 @@
                     <!-- Personalización de Título y Subtítulo -->
                     <div class="form-custom-texts-box">
                       <div class="form-custom-texts-header">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
                           <path d="M12 20h9"></path>
                           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                         </svg>
@@ -1203,8 +1297,8 @@
                       </div>
                       <div class="form-custom-field">
                         <label class="form-custom-label" for="googleReviewsSubtitle">Subtítulo del Botón</label>
-                        <input type="text" name="googleReviewsSubtitle" id="googleReviewsSubtitle" class="form-custom-input"
-                          placeholder="Ver en Google Maps • Cómo llegar"
+                        <input type="text" name="googleReviewsSubtitle" id="googleReviewsSubtitle"
+                          class="form-custom-input" placeholder="Ver en Google Maps • Cómo llegar"
                           value="<%= selectedCard ? (selectedCard.googleReviewsSubtitle || 'Ver en Google Maps • Cómo llegar') : 'Ver en Google Maps • Cómo llegar' %>">
                       </div>
                     </div>
@@ -1213,27 +1307,32 @@
                   <!-- ==============================================
                        BLOQUE 9: ESTADO Y PUBLICACIÓN
                        ============================================== -->
-                  <div class="form-module-card" style="margin-bottom: 1.5rem; background: rgba(30, 43, 60, 0.12); border-color: rgba(59, 130, 246, 0.2);">
+                  <div class="form-module-card"
+                    style="margin-bottom: 1.5rem; background: rgba(30, 43, 60, 0.12); border-color: rgba(59, 130, 246, 0.2);">
                     <div class="form-module-header">
                       <div class="form-module-title-group">
                         <div class="form-module-icon icon-status">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
                           </svg>
                         </div>
                         <h3 class="form-module-title">Publicación & Estado</h3>
                       </div>
-                      <span class="form-module-badge" style="color: #93c5fd; background: rgba(59, 130, 246, 0.15);">Sistema</span>
+                      <span class="form-module-badge"
+                        style="color: #93c5fd; background: rgba(59, 130, 246, 0.15);">Sistema</span>
                     </div>
 
                     <div class="form-group" style="margin-bottom: 0;">
                       <label class="form-label" for="status">Estado de la Tarjeta</label>
                       <select name="status" id="status" class="form-input">
-                        <option value="assigned" <%=(!selectedCard || selectedCard.status==='assigned' ) ? 'selected' : '' %>>
+                        <option value="assigned" <%=(!selectedCard || selectedCard.status==='assigned' ) ? 'selected'
+                          : '' %>>
                           Asignada (Activa con Landing Pública)
                         </option>
-                        <option value="available" <%=(selectedCard && selectedCard.status==='available' ) ? 'selected' : '' %>>
+                        <option value="available" <%=(selectedCard && selectedCard.status==='available' ) ? 'selected'
+                          : '' %>>
                           Disponible (No asignada / En espera)
                         </option>
                       </select>

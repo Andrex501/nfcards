@@ -90,6 +90,12 @@ const cardSchema = new mongoose.Schema({
     default: 'Línea secundaria de atención',
     required: false
   },
+  contactPhone: {
+    type: String,
+    trim: true,
+    default: '',
+    required: false
+  },
   tiktokUrl: {
     type: String,
     trim: true,

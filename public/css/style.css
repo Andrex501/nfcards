@@ -1329,11 +1329,16 @@ img, svg {
 .mobile-card-container {
   width: 100%;
   max-width: 420px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-card);
+  background: rgba(18, 18, 18, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-lg);
   padding: 2.25rem 1.5rem 1.75rem;
-  box-shadow: var(--shadow-modal);
+  box-shadow: 
+    0 24px 60px -12px rgba(0, 0, 0, 0.8),
+    0 0 50px -15px rgba(59, 130, 246, 0.12),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
   animation: fadeIn 0.35s ease-out;
@@ -1346,20 +1351,41 @@ img, svg {
   }
 }
 
-/* Sutil adorno señorial superior */
+/* Efecto de Luz Ambiental Superior Señorial */
 .mobile-card-container::before {
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 5%;
+  right: 5%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.6), rgba(255, 255, 255, 0.9), rgba(96, 165, 250, 0.6), transparent);
+  box-shadow: 0 0 16px 2px rgba(96, 165, 250, 0.45);
+  z-index: 10;
 }
 
 .profile-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Animación de Pulso Radar NFC */
+@keyframes nfcRadarPulse {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.8;
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.45);
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 0.18;
+    box-shadow: 0 0 0 14px rgba(52, 211, 153, 0);
+  }
+  100% {
+    transform: scale(1.22);
+    opacity: 0;
+    box-shadow: 0 0 0 20px rgba(52, 211, 153, 0);
+  }
 }
 
 .avatar-wrapper {
@@ -1367,6 +1393,27 @@ img, svg {
   width: 80px;
   height: 80px;
   margin: 0 auto 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Anillos concéntricos de pulso NFC */
+.avatar-wrapper::before,
+.avatar-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(52, 211, 153, 0.35);
+  pointer-events: none;
+  z-index: 0;
+  animation: nfcRadarPulse 2.8s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+
+.avatar-wrapper::after {
+  animation-delay: 1.4s;
+  border-color: rgba(96, 165, 250, 0.3);
 }
 
 .business-avatar {
@@ -1385,6 +1432,7 @@ img, svg {
   box-shadow: var(--shadow-subtle);
   overflow: hidden;
   position: relative;
+  z-index: 1;
 }
 
 .avatar-logo-img {
@@ -1408,6 +1456,7 @@ img, svg {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 2;
 }
 
 .business-title {
@@ -1440,7 +1489,98 @@ img, svg {
   box-shadow: 0 0 6px var(--status-available-dot);
 }
 
-/* Lista de Botones de Acción Pública */
+/* ==========================================================================
+   BOTÓN DESTACADO: GUARDAR EN CONTACTOS (vCard / .vcf)
+   ========================================================================== */
+.save-contact-container {
+  margin-bottom: 1.5rem;
+}
+
+.btn-save-contact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.94rem;
+  letter-spacing: -0.01em;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  min-height: 52px;
+}
+
+.btn-save-contact:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45), 0 0 20px rgba(96, 165, 250, 0.15);
+}
+
+.btn-save-contact:active {
+  transform: scale(0.98) translateY(0);
+}
+
+.btn-save-contact .btn-save-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #60a5fa;
+  transition: transform 0.2s ease;
+}
+
+.btn-save-contact:hover .btn-save-icon {
+  transform: scale(1.1);
+}
+
+.btn-save-contact .btn-save-text {
+  font-weight: 600;
+}
+
+.btn-save-contact .btn-save-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(96, 165, 250, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(96, 165, 250, 0.25);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  margin-left: auto;
+  transition: all 0.2s ease;
+}
+
+.btn-save-contact:hover .btn-save-badge {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #60a5fa;
+  transform: translateY(1px);
+}
+
+/* ==========================================================================
+   LISTA DE BOTONES DE ACCIÓN PÚBLICA (Animación en Cascada)
+   ========================================================================== */
+@keyframes staggeredFadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .actions-list {
   display: flex;
   flex-direction: column;
@@ -1457,7 +1597,18 @@ img, svg {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   border: 1px solid transparent;
   min-height: 58px; /* Táctil de primera categoría */
+  animation: staggeredFadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+/* Retraso progresivo (animation-delay de 0.08s) para sensación nativa de app */
+.actions-list .action-btn:nth-child(1) { animation-delay: 0.08s; }
+.actions-list .action-btn:nth-child(2) { animation-delay: 0.16s; }
+.actions-list .action-btn:nth-child(3) { animation-delay: 0.24s; }
+.actions-list .action-btn:nth-child(4) { animation-delay: 0.32s; }
+.actions-list .action-btn:nth-child(5) { animation-delay: 0.40s; }
+.actions-list .action-btn:nth-child(6) { animation-delay: 0.48s; }
+.actions-list .action-btn:nth-child(7) { animation-delay: 0.56s; }
+.actions-list .action-btn:nth-child(8) { animation-delay: 0.64s; }
 
 .action-btn:active {
   transform: scale(0.98);
@@ -1831,6 +1982,37 @@ img, svg {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+}
+
+/* Enlace Comercial Interactivo ("Powered by NithSoft") */
+.powered-by-link {
+  cursor: pointer;
+}
+
+.powered-by-link:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.powered-by-link svg {
+  transition: transform 0.25s ease, color 0.25s ease, filter 0.25s ease;
+}
+
+.powered-by-link:hover svg {
+  color: #fbbf24;
+  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.7));
+  transform: scale(1.2);
+}
+
+.powered-by-link:active {
+  transform: scale(0.97);
 }
 
 /* ==========================================================================
