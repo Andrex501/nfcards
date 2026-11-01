@@ -45,10 +45,18 @@
         </div>
       </header>
 
-      <!-- Botón Principal Destacado: Guardar en Contactos (vCard .vcf) - Solo visible si contactPhone está configurado -->
+      <!-- Botón Principal Destacado: Guardar en Contactos (vCard .vcf / Android Intent) - Solo visible si contactPhone está configurado -->
       <% if (card.contactPhone && card.contactPhone.trim() !== '') { %>
       <div class="save-contact-container">
-        <a href="/p/<%= card.cardId %>/save-contact" class="btn-save-contact" id="btn-save-contact" download title="Guardar este negocio en la agenda de tu teléfono">
+        <a 
+          href="/p/<%= card.cardId %>/save-contact" 
+          class="btn-save-contact" 
+          id="btn-save-contact" 
+          download 
+          data-name="<%= card.businessName || 'Contacto' %>"
+          data-phone="<%= card.contactPhone %>"
+          data-vcf-url="/p/<%= card.cardId %>/save-contact"
+          title="Guardar este negocio en la agenda de tu teléfono">
           <div class="btn-save-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -307,6 +315,56 @@
   </div>
 
   <script>
+    // Gestión inteligente de Guardar Contacto según el Sistema Operativo
+    const saveContactBtn = document.getElementById('btn-save-contact');
+    if (saveContactBtn) {
+      saveContactBtn.addEventListener('click', (e) => {
+        const btn = e.currentTarget;
+        const name = btn.dataset.name || '';
+        const phone = (btn.dataset.phone || '').replace(/[^\d+]/g, '');
+        const vcfUrl = btn.dataset.vcfUrl || btn.getAttribute('href');
+
+        // Detección de dispositivo / SO
+        const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+        const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        const isAndroid = /android/i.test(ua);
+
+        // 1. En iOS: Redirección estándar al .vcf (Safari abre la ficha de contacto nativa)
+        if (isIOS) {
+          window.location.href = vcfUrl;
+          return;
+        }
+
+        // 2. En Android: Lanzar Deep Link (Intent) para abrir la app nativa de Contactos prellenada
+        if (isAndroid) {
+          e.preventDefault();
+
+          const encodedName = encodeURIComponent(name);
+          const encodedPhone = encodeURIComponent(phone);
+
+          const androidIntent = `intent:#Intent;` +
+            `action=android.intent.action.INSERT;` +
+            `type=vnd.android.cursor.dir/contact;` +
+            `S.name=${encodedName};` +
+            `S.phone=${encodedPhone};` +
+            `end`;
+
+          window.location.href = androidIntent;
+
+          // Fallback de seguridad: si el Intent no responde en 1.5s, descargar el .vcf
+          const fallbackTimer = setTimeout(() => {
+            window.location.href = vcfUrl;
+          }, 1500);
+
+          // Si el usuario sale a la app de contactos, cancelar el fallback
+          window.addEventListener('blur', () => clearTimeout(fallbackTimer), { once: true });
+          return;
+        }
+
+        // 3. En PC / Dispositivos no identificados: Comportamiento nativo de enlace/descarga
+      });
+    }
+
     // Compartir perfil con Web Share API o copiar URL
     const shareBtn = document.getElementById('btn-share');
     const shareText = document.getElementById('share-text');
