@@ -324,6 +324,9 @@ app.post('/admin/update/:cardId', async (req, res) => {
       googleReviewsUrl,
       googleReviewsTitle,
       googleReviewsSubtitle,
+      maps_url_2,
+      maps_title_2,
+      maps_subtitle_2,
       logoBase64,
       logoUrlCustom,
       removeLogo,
@@ -359,6 +362,9 @@ app.post('/admin/update/:cardId', async (req, res) => {
 
     const finalGoogleReviewsTitle = (googleReviewsTitle && googleReviewsTitle.trim()) ? googleReviewsTitle.trim() : 'Ubicación del Local';
     const finalGoogleReviewsSubtitle = (googleReviewsSubtitle && googleReviewsSubtitle.trim()) ? googleReviewsSubtitle.trim() : 'Ver en Google Maps • Cómo llegar';
+
+    const finalMapsTitle2 = (maps_title_2 && maps_title_2.trim()) ? maps_title_2.trim() : 'Ubicación Sede 2';
+    const finalMapsSubtitle2 = (maps_subtitle_2 && maps_subtitle_2.trim()) ? maps_subtitle_2.trim() : 'Ver en Google Maps • Cómo llegar';
 
     // Teléfono para vCard: únicamente el valor explícitamente ingresado por el usuario
     const finalContactPhone = (contactPhone && contactPhone.trim()) ? contactPhone.trim() : '';
@@ -409,6 +415,9 @@ app.post('/admin/update/:cardId', async (req, res) => {
         googleReviewsUrl: googleReviewsUrl ? googleReviewsUrl.trim() : '',
         googleReviewsTitle: finalGoogleReviewsTitle,
         googleReviewsSubtitle: finalGoogleReviewsSubtitle,
+        maps_url_2: maps_url_2 ? maps_url_2.trim() : '',
+        maps_title_2: finalMapsTitle2,
+        maps_subtitle_2: finalMapsSubtitle2,
         logoUrl: finalLogoUrl,
         status: newStatus,
         updatedAt: new Date()
@@ -457,6 +466,9 @@ app.post('/admin/reset/:cardId', async (req, res) => {
         googleReviewsUrl: '',
         googleReviewsTitle: 'Ubicación del Local',
         googleReviewsSubtitle: 'Ver en Google Maps • Cómo llegar',
+        maps_url_2: '',
+        maps_title_2: 'Ubicación Sede 2',
+        maps_subtitle_2: 'Ver en Google Maps • Cómo llegar',
         logoUrl: '',
         status: 'available',
         scanCount: 0,

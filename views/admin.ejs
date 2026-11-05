@@ -1307,6 +1307,57 @@
                   </div>
 
                   <!-- ==============================================
+                       BLOQUE: UBICACIÓN SEDE 2 (OPCIONAL)
+                       ============================================== -->
+                  <div class="form-module-card">
+                    <div class="form-module-header">
+                      <div class="form-module-title-group">
+                        <div class="form-module-icon icon-location">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                          </svg>
+                        </div>
+                        <h3 class="form-module-title">Ubicación Sede 2 (Opcional)</h3>
+                      </div>
+                      <span class="form-module-badge">Sede 2</span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                      <label class="form-label" for="maps_url_2">Enlace de Google Maps (Sede 2)</label>
+                      <input type="url" name="maps_url_2" id="maps_url_2" class="form-input"
+                        placeholder="Ej: https://maps.app.goo.gl/... o enlace de Maps de la Sede 2"
+                        value="<%= selectedCard ? (selectedCard.maps_url_2 || '') : '' %>">
+                      <small class="form-hint">Enlace de Google Maps para tu segunda sede o sucursal.</small>
+                    </div>
+
+                    <!-- Personalización de Título y Subtítulo -->
+                    <div class="form-custom-texts-box">
+                      <div class="form-custom-texts-header">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <path d="M12 20h9"></path>
+                          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                        </svg>
+                        <span>Personalización del Botón</span>
+                      </div>
+                      <div class="form-custom-field">
+                        <label class="form-custom-label" for="maps_title_2">Título del Botón Sede 2</label>
+                        <input type="text" name="maps_title_2" id="maps_title_2" class="form-custom-input"
+                          placeholder="Ubicación Sede 2"
+                          value="<%= selectedCard ? (selectedCard.maps_title_2 || 'Ubicación Sede 2') : 'Ubicación Sede 2' %>">
+                      </div>
+                      <div class="form-custom-field">
+                        <label class="form-custom-label" for="maps_subtitle_2">Subtítulo del Botón Sede 2</label>
+                        <input type="text" name="maps_subtitle_2" id="maps_subtitle_2"
+                          class="form-custom-input" placeholder="Ver en Google Maps • Cómo llegar"
+                          value="<%= selectedCard ? (selectedCard.maps_subtitle_2 || 'Ver en Google Maps • Cómo llegar') : 'Ver en Google Maps • Cómo llegar' %>">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- ==============================================
                        BLOQUE 9: ESTADO Y PUBLICACIÓN
                        ============================================== -->
                   <div class="form-module-card"

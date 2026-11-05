@@ -162,6 +162,24 @@ const cardSchema = new mongoose.Schema({
     default: 'Ver en Google Maps • Cómo llegar',
     required: false
   },
+  maps_url_2: {
+    type: String,
+    trim: true,
+    default: '',
+    required: false
+  },
+  maps_title_2: {
+    type: String,
+    trim: true,
+    default: 'Ubicación Sede 2',
+    required: false
+  },
+  maps_subtitle_2: {
+    type: String,
+    trim: true,
+    default: 'Ver en Google Maps • Cómo llegar',
+    required: false
+  },
   scanCount: {
     type: Number,
     default: 0,

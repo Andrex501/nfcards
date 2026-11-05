@@ -86,7 +86,8 @@
         const hasTiktok = Boolean(card.tiktokUrl && card.tiktokUrl.trim() !== '' && card.tiktokLink);
         const hasWebsite = Boolean(card.websiteUrl && card.websiteUrl.trim() !== '');
         const hasLocation = Boolean(card.googleReviewsUrl && card.googleReviewsUrl.trim() !== '');
-        const hasAnyAction = hasWhatsapp || hasWhatsapp2 || hasInstagram || hasFacebook || hasTiktok || hasWebsite || hasLocation;
+        const hasLocation2 = Boolean(card.maps_url_2 && card.maps_url_2.trim() !== '');
+        const hasAnyAction = hasWhatsapp || hasWhatsapp2 || hasInstagram || hasFacebook || hasTiktok || hasWebsite || hasLocation || hasLocation2;
       %>
 
       <!-- Canales de Contacto Directo (Estrictamente Condicionales) -->
@@ -257,6 +258,31 @@
               <div class="btn-text-group">
                 <span class="btn-title"><%= locTitle %></span>
                 <span class="btn-subtitle"><%= locSubtitle %></span>
+              </div>
+              <div class="btn-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </div>
+            </a>
+          <% } %>
+
+          <!-- Canal Ubicación Sede 2 (Google Maps - Opcional) -->
+          <% if (hasLocation2) { 
+              const locTitle2 = (card.maps_title_2 && card.maps_title_2.trim()) ? card.maps_title_2.trim() : 'Ubicación Sede 2';
+              const locSubtitle2 = (card.maps_subtitle_2 && card.maps_subtitle_2.trim()) ? card.maps_subtitle_2.trim() : 'Ver en Google Maps • Cómo llegar';
+          %>
+            <a href="<%= card.maps_url_2 %>" target="_blank" rel="noopener noreferrer" class="action-btn btn-location" id="btn-location-2">
+              <div class="btn-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </div>
+              <div class="btn-text-group">
+                <span class="btn-title"><%= locTitle2 %></span>
+                <span class="btn-subtitle"><%= locSubtitle2 %></span>
               </div>
               <div class="btn-arrow">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
